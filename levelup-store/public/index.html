@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Level Up - Centro de Recargas de Free Fire, Roblox y Blood Strike. El servicio más rápido y seguro de Venezuela.">
+  <meta name="theme-color" content="#1a0018">
+  <title>Level Up - Centro de Recargas</title>
+  
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- Variables y Reset --- */
+    :root {
+      --primary: #ff9900;
+      --primary-glow: rgba(255, 153, 0, 0.4);
+      --text-main: #ffffff;
+      --text-muted: #a0aec0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top left, #1a0018, #0a0510 60%, #000000 100%);
+      color: var(--text-main); 
+      min-height: 100vh; 
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.no-scroll { overflow: hidden; }
+    main { flex: 1; padding-bottom: 50px; }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0a0510; }
+    ::-webkit-scrollbar-thumb { background: #ff9900; border-radius: 4px; }
+
+    /* --- Animaciones Globales --- */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-up { animation: fadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+    .delay-1 { animation-delay: 0.1s; opacity: 0; }
+    .delay-2 { animation-delay: 0.2s; opacity: 0; }
+    .delay-3 { animation-delay: 0.3s; opacity: 0; }
+
+    /* --- Menú Lateral (Sidebar) --- */
+    .menu-toggle {
+      font-size: 28px; cursor: pointer; color: var(--primary);
+      transition: transform 0.3s ease;
+    }
+    .menu-toggle:hover { transform: scale(1.1); }
+    
+    .sidebar {
+      position: fixed; top: 0; left: -300px; width: 280px; height: 100vh;
+      background: rgba(15, 5, 20, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 153, 0, 0.2); z-index: 1001;
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      padding-top: 80px; display: flex; flex-direction: column;
+      box-shadow: 15px 0 40px rgba(0,0,0,0.9);
+    }
+    .sidebar.open { left: 0; }
+    
+    .close-btn {
+      position: absolute; top: 20px; right: 20px; font-size: 28px;
+      cursor: pointer; color: #ff3333; transition: transform 0.3s;
+      width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+    }
+    .close-btn:hover { transform: rotate(90deg) scale(1.1); }
+    
+    .sidebar-logo {
+      text-align: center; font-size: 22px; font-family: 'Montserrat', sans-serif; font-weight: 900;
+      letter-spacing: 1px; color: #fff; margin-bottom: 30px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .sidebar-logo img { width: 36px; height: 36px; object-fit: contain; border-radius: 50%; }
+    .sidebar-logo span { color: var(--primary); }
+    
+    .sidebar a {
+      color: #cdd6e5; padding: 16px 25px; text-decoration: none;
+      font-size: 15px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.03);
+      transition: all 0.3s ease; display: flex; align-items: center; gap: 12px;
+    }
+    .sidebar a:hover { color: var(--primary); padding-left: 32px; border-left: 4px solid var(--primary); background: rgba(255,153,0,0.1); }
+
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+      z-index: 1000; backdrop-filter: blur(4px); animation: fadeIn 0.4s;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* --- Ventana Emergente Secreta (Modal Admin) --- */
+    .secret-modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85);
+      z-index: 9999; backdrop-filter: blur(8px); align-items: center; justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    .secret-modal {
+      background: rgba(20, 12, 28, 0.95); border: 1px solid rgba(255, 153, 0, 0.4);
+      padding: 30px; border-radius: 20px; width: 90%; max-width: 380px; text-align: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.9); animation: fadeUp 0.3s ease;
+    }
+    .secret-modal h3 { font-family: 'Montserrat', sans-serif; color: var(--primary); font-size: 20px; margin-bottom: 10px; text-transform: uppercase; }
+    .secret-modal p { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
+    .secret-modal-buttons { display: flex; gap: 12px; }
+    .btn-modal-si {
+      flex: 1; background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 10px;
+      font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s;
+    }
+    .btn-modal-si:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--primary-glow); }
+    .btn-modal-no {
+      flex: 1; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px;
+      font-weight: 600; text-transform: uppercase; cursor: pointer; transition: 0.2s;
+    }
+    .btn-modal-no:hover { background: rgba(255,255,255,0.1); }
+
+    /* --- Navbar --- */
+    nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px 30px; background: rgba(10, 5, 16, 0.8);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); 
+      border-bottom: 1px solid rgba(255, 153, 0, 0.1);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { 
+      font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 900; 
+      letter-spacing: 1px; color: #fff; text-decoration: none; 
+      display: flex; align-items: center; gap: 10px; 
+    }
+    .nav-logo img { width: 34px; height: 34px; object-fit: contain; border-radius: 50%; }
+    .nav-logo span { color: var(--primary); }
+    
+    /* --- Hero Section --- */
+    header { text-align: center; padding: 50px 15px 30px; position: relative; }
+    .titulo-principal {
+      font-family: 'Montserrat', sans-serif; font-size: clamp(38px, 6vw, 50px); 
+      letter-spacing: 2px; text-transform: uppercase; font-weight: 900; 
+      background: linear-gradient(90deg, #ffb732, #ffffff, #ffb732);
+      background-size: 200% auto; color: transparent; -webkit-background-clip: text;
+      animation: brilloFuego 5s linear infinite;
+    }
+    @keyframes brilloFuego { to { background-position: 200% center; } }
+    .subtitulo { color: var(--text-muted); font-size: 15px; font-weight: 400; margin-top: 10px; }
+
+    /* --- Títulos de Categorías --- */
+    .categoria-titulo {
+      text-align: center; font-family: 'Montserrat', sans-serif; font-size: 22px; 
+      color: var(--primary); margin: 30px 0 25px; text-transform: uppercase; 
+      font-weight: 900; letter-spacing: 1.5px; display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .categoria-titulo span { font-size: 24px; }
+
+    /* --- Grilla de Juegos --- */
+    .grid-container { 
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; 
+      max-width: 900px; margin: 0 auto; padding: 0 15px 30px;
+    }
+    
+    .card {
+      background: rgba(25, 15, 35, 0.6); backdrop-filter: blur(10px);
+      width: 260px; height: 170px; border-radius: 18px; overflow: hidden; cursor: pointer; 
+      border: 1px solid rgba(255, 153, 0, 0.2); text-decoration: none; color: white;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; 
+      position: relative; box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+    
+    .card:hover {
+      transform: translateY(-8px); border-color: var(--primary);
+      box-shadow: 0 12px 25px var(--primary-glow);
+    }
+    
+    .img-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+    .img-container::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(15,5,20,1) 0%, rgba(15,5,20,0.3) 50%, rgba(15,5,20,0) 100%); 
+      z-index: 1;
+    }
+    
+    .card img { 
+      width: 100%; height: 100%; object-fit: cover; 
+      transition: transform 0.5s ease; filter: brightness(0.9); 
+    }
+    .card:hover img { transform: scale(1.1); filter: brightness(1.05); }
+    
+    .card h3 {
+      position: absolute; bottom: 0; width: 100%; padding: 15px 10px; font-size: 16px; 
+      font-family: 'Montserrat', sans-serif; font-weight: 800; text-transform: uppercase; 
+      text-align: center; z-index: 2; letter-spacing: 1px; text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    }
+
+    /* --- Sección Garantías --- */
+    .trust-section {
+      max-width: 900px; margin: 20px auto 50px; padding: 0 15px; position: relative;
+    }
+    .trust-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;
+    }
+    .trust-card {
+      background: rgba(25, 15, 35, 0.4); backdrop-filter: blur(10px);
+      border: 1px dashed rgba(255, 153, 0, 0.3); border-radius: 16px;
+      padding: 25px 20px; text-align: center; transition: all 0.3s ease;
+    }
+    .trust-card:hover { border-color: var(--primary); background: rgba(30, 20, 45, 0.8); transform: translateY(-5px); }
+    
+    .trust-icon { font-size: 32px; margin-bottom: 12px; }
+    .trust-card h3 { color: #fff; font-size: 15px; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
+    .trust-card p { color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+
+    /* Sticker Decorativo de Sukuna */
+    .sticker-sukuna {
+      position: absolute; top: -50px; right: 10px; width: 80px; height: 80px;
+      object-fit: contain; filter: drop-shadow(0 0 10px rgba(255,51,51,0.5));
+      animation: floatSticker 3s ease-in-out infinite; z-index: 10;
+    }
+    @keyframes floatSticker {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(5deg); }
+    }
+
+    /* --- Acerca de Nosotros --- */
+    .about-section {
+      max-width: 800px; margin: 20px auto 40px; padding: 40px 30px;
+      background: rgba(25, 15, 35, 0.5); backdrop-filter: blur(10px);
+      border-radius: 24px; border: 1px solid rgba(255, 153, 0, 0.15); 
+      text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .about-section h2 { color: var(--primary); margin-bottom: 20px; font-family: 'Montserrat', sans-serif; font-size: 26px; font-weight: 900; text-transform: uppercase; }
+    .about-section p { color: #cbd5e1; line-height: 1.7; font-size: 15px; margin-bottom: 25px; }
+    
+    .btn-canal {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: #25D366; color: #fff; text-decoration: none; padding: 14px 30px; border-radius: 30px; 
+      font-weight: 800; font-size: 14px; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); 
+      text-transform: uppercase; transition: transform 0.2s;
+    }
+    .btn-canal:hover { transform: scale(1.05); }
+
+    /* --- Footer --- */
+    footer {
+      text-align: center; padding: 25px 15px; background: rgba(5, 2, 8, 0.9);
+      border-top: 1px solid rgba(255, 153, 0, 0.1); color: #64748b; font-size: 13px; margin-top: auto;
+    }
+    footer span { color: var(--primary); font-weight: bold; }
+
+    /* --- Botón Flotante WhatsApp --- */
+    .whatsapp-float {
+      position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px;
+      background: #25d366; color: #FFF; border-radius: 50px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 5px 20px rgba(37,211,102,0.4); z-index: 100; 
+      text-decoration: none; transition: transform 0.2s ease;
+    }
+    .whatsapp-float:hover { transform: scale(1.1); }
+    .whatsapp-float svg { width: 34px; height: 34px; fill: currentColor; }
+
+    @media (max-width: 650px) {
+      nav { padding: 12px 15px; }
+      header { padding: 30px 10px 20px; }
+      .titulo-principal { font-size: 32px; }
+      .grid-container { gap: 15px; padding: 0 10px 20px; }
+      .card { width: 100%; max-width: 300px; height: 160px; } 
+      .about-section { margin: 20px 10px; padding: 25px 15px; }
+      .sticker-sukuna { width: 60px; height: 60px; top: -30px; right: 5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VENTANA EMERGENTE SECRETA (MODAL ADMIN) -->
+  <div class="secret-modal-overlay" id="secretModal">
+    <div class="secret-modal">
+      <h3>⚡ Acceso a Bóveda</h3>
+      <p>¿Deseas acceder al panel de administración?</p>
+      <div class="secret-modal-buttons">
+        <button class="btn-modal-si" onclick="irAlAdmin()">Sí, acceder</button>
+        <button class="btn-modal-no" onclick="cerrarModalSecreto()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-overlay" id="menuOverlay" onclick="toggleMenu()" aria-label="Cerrar menú"></div>
+
+  <aside class="sidebar" id="sidebarMenu">
+    <div class="close-btn" onclick="toggleMenu()" aria-label="Cerrar menú">✖</div>
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="Logo Level Up"> LEVEL<span>UP</span>
+    </div>
+    
+    <a href="index.html">🏠 Inicio</a>
+    <a href="freefire.html">🔥 Free Fire</a>
+    <a href="roblox.html">🧱 Roblox</a>
+    <a href="bloodstrike.html">🎯 Blood Strike</a>
+  </aside>
+
+  <nav>
+    <div class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir menú">☰</div>
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="Logo Level Up"> LEVEL<span>UP</span>
+    </a>
+  </nav>
+
+  <main>
+    <header class="animate-up">
+      <h1 class="titulo-principal">LEVEL UP</h1>
+      <p class="subtitulo">Selecciona tu juego para realizar la recarga</p>
+    </header>
+
+    <div class="animate-up delay-1">
+      <h2 class="categoria-titulo"><span>🎮</span> Catálogo Disponible</h2>
+      
+      <div class="grid-container">
+        <!-- Tarjeta Free Fire -->
+        <a href="freefire.html" class="card">
+          <div class="img-container"><img src="free fire.jpg" alt="Free Fire" loading="lazy"></div>
+          <h3>Free Fire</h3>
+        </a>
+        <!-- Tarjeta Roblox -->
+        <a href="roblox.html" class="card">
+          <div class="img-container"><img src="roblox.jpg" alt="Roblox" loading="lazy"></div>
+          <h3>Roblox</h3>
+        </a>
+        <!-- Tarjeta Blood Strike -->
+        <a href="bloodstrike.html" class="card">
+          <div class="img-container"><img src="bloodstrike.jpg" alt="Blood Strike" loading="lazy"></div>
+          <h3>Blood Strike</h3>
+        </a>
+      </div>
+    </div>
+
+    <section class="trust-section animate-up delay-2">
+      <h2 class="categoria-titulo" style="font-size: 20px; margin-bottom: 25px;"><span>⚡</span> Compra Segura</h2>
+      
+      <img src="Jujutsu Kaisen Jjk Sticker.gif" alt="Sukuna Sticker" class="sticker-sukuna">
+
+      <div class="trust-grid">
+        <div class="trust-card">
+          <div class="trust-icon">🏦</div>
+          <h3>Pago Móvil Directo</h3>
+          <p>Transferencias rápidas y seguras al Banco de Venezuela.</p>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon">🔒</div>
+          <h3>Proceso Automatizado</h3>
+          <p>Tu recarga se valida y procesa por sistema sin demoras.</p>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon">🤝</div>
+          <h3>Comunidad Real</h3>
+          <p>Más de 1,500 gamers ya confían en nuestro servicio.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="animate-up delay-3">
+      <section class="about-section">
+        <h2>Sobre Nosotros</h2>
+        <p>
+          Somos un centro de recargas <strong>100% venezolano</strong>. Esta iniciativa nació de la pasión por los videojuegos, iniciando como jugadores entre hermanos y compartiendo con una comunidad que hoy supera los 1,500 suscriptores. Gracias a nuestra formación en administración, trabajamos todos los días para <strong>automatizar y optimizar</strong> nuestros procesos, ofreciéndote el servicio más rápido, organizado y seguro del país.
+        </p>
+        <a href="https://whatsapp.com/channel/0029Vb82z5017En51RN1NH1v" target="_blank" rel="noopener noreferrer" class="btn-canal">
+          📢 Únete a nuestro canal
+        </a>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 <span>LEVEL UP</span> - Centro de Recargas. Todos los derechos reservados.</p>
+  </footer>
+
+  <a href="https://wa.me/584141916377" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Escribir a Soporte">
+    <svg viewBox="0 0 24 24">
+      <path d="M12.031 0C5.385 0 0 5.383 0 12.029c0 2.124.553 4.195 1.605 6.01L.036 24l6.11-1.603c1.737 1.002 3.738 1.531 5.885 1.531 6.643 0 12.028-5.381 12.028-12.027C24.059 5.383 18.675 0 12.031 0zm3.565 17.27c-.54.269-3.187.584-3.557.584-.37 0-1.802-.234-4.225-2.656-2.424-2.425-2.657-3.856-2.657-4.226 0-.37.316-3.018.584-3.557.269-.54.912-.767 1.451-.497.54.269 1.433 3.493 1.433 3.864 0 .37-.197.808-.466 1.077-.466.466.269.269-.538.448-.179 1.077.359.627 1.614 1.882 2.241 2.241.628.359.808.09 1.077-.179.269-.269.808-.466 1.077-.466.37 0 3.595.892 3.864 1.432.27.539.043 1.182-.497 1.451z"/>
+    </svg>
+  </a>
+
+  <script>
+    const body = document.body;
+
+    function toggleMenu() {
+      const sidebar = document.getElementById('sidebarMenu');
+      const overlay = document.getElementById('menuOverlay');
+      
+      if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        overlay.style.display = 'none';
+        body.classList.remove('no-scroll');
+      } else {
+        sidebar.classList.add('open');
+        overlay.style.display = 'block';
+        body.classList.add('no-scroll');
+      }
+    }
+
+    // --- ATAJO SECRETO (Ctrl + Alt + Shift) ---
+    window.addEventListener('keydown', (e) => {
+      // Verificamos si se presionaron Ctrl, Alt y Shift al mismo tiempo
+      if (e.ctrlKey && e.altKey && e.shiftKey) {
+        e.preventDefault(); // Evita comportamientos extraños del navegador
+        const modal = document.getElementById('secretModal');
+        modal.style.display = 'flex';
+        body.classList.add('no-scroll');
+      }
+    });
+
+    function cerrarModalSecreto() {
+      const modal = document.getElementById('secretModal');
+      modal.style.display = 'none';
+      body.classList.remove('no-scroll');
+    }
+
+    function irAlAdmin() {
+      window.location.href = 'admin.html';
+    }
+  </script>
+
+</body>
+</html>

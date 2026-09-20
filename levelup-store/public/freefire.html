@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Level Up - Recargas Free Fire</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #0a0510;
+      --panel-bg: #130c21;
+      --card-bg: #18122a;
+      --card-border: #2b1f47;
+      --primary-orange: #ff6600;
+      --primary-gradient: linear-gradient(135deg, #ff7700, #ff3300);
+      --price-bg: #0d0818;
+      --cyan-text: #00ffcc;
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      --danger: #ff3333;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      background-image: radial-gradient(circle at top, #230c38 0%, #0a0510 70%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 10px;
+    }
+
+    .main-card {
+      background: var(--panel-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 28px;
+      padding: 30px 25px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 102, 0, 0.1);
+    }
+
+    .top-nav { margin-bottom: 20px; }
+    .btn-back { color: #ff9900; text-decoration: none; font-size: 14px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
+    .btn-back:hover { transform: translateX(-3px); color: #ffaa22; }
+
+    .title-banner { text-align: center; font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 900; color: var(--primary-orange); letter-spacing: 1.5px; margin-bottom: 25px; text-transform: uppercase; text-shadow: 0 0 15px rgba(255, 102, 0, 0.4); }
+
+    .step-title { font-size: 13px; font-weight: 800; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+
+    .id-section { margin-bottom: 30px; }
+    .id-input-group { display: flex; gap: 10px; }
+    .input-field { flex: 1; background: #1a122c; border: 1px solid var(--card-border); border-radius: 12px; padding: 14px 16px; color: var(--cyan-text); font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; outline: none; transition: all 0.3s ease; text-align: center; }
+    .input-field:focus { border-color: var(--primary-orange); box-shadow: 0 0 12px rgba(255, 102, 0, 0.2); }
+
+    .btn-verify { background: var(--primary-gradient); color: #fff; border: none; border-radius: 12px; padding: 0 20px; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3); }
+    .btn-verify:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 102, 0, 0.5); }
+    .btn-verify:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+    
+    .id-status { font-size: 13px; margin-top: 8px; display: none; font-weight: 700; text-align: center; }
+
+    .catalog-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 25px; }
+    .product-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.25s ease; position: relative; }
+    .product-card:hover { border-color: var(--primary-orange); transform: translateY(-3px); }
+    .product-card.selected { border-color: var(--primary-orange); background: rgba(255, 102, 0, 0.08); box-shadow: 0 0 20px rgba(255, 102, 0, 0.35); }
+    .product-card.full-width { grid-column: span 2; }
+    
+    .diamonds-count { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 20px; color: #ffffff; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .price-box { background: var(--price-bg); border-radius: 10px; padding: 8px 12px; border: 1px solid rgba(255, 255, 255, 0.03); }
+    .price-text { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 16px; color: var(--cyan-text); letter-spacing: 0.5px; }
+
+    .checkout-section { display: none; background: rgba(0, 0, 0, 0.3); border: 1px dashed rgba(255, 102, 0, 0.4); border-radius: 18px; padding: 20px; margin-top: 20px; animation: fadeIn 0.4s ease; }
+    .checkout-section.active { display: block; }
+    
+    .bank-card {
+      background: linear-gradient(135deg, rgba(255,102,0,0.08), rgba(255,51,0,0.02));
+      border: 1px solid var(--primary-orange);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 15px;
+      box-shadow: inset 0 0 15px rgba(255,102,0,0.05);
+    }
+    .bank-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; color: #cbd5e1; font-weight: 600; }
+    .bank-row span { color: var(--primary-orange); font-weight: 900; font-size: 15px; }
+    
+    .btn-copy {
+      background: #1a122c; color: white; border: 1px solid var(--card-border); padding: 12px;
+      border-radius: 12px; width: 100%; cursor: pointer; font-weight: 600; margin-bottom: 20px;
+      transition: all 0.3s; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-copy:hover { border-color: var(--primary-orange); color: var(--primary-orange); background: #2b1f47; }
+    .btn-copy.copied { background: var(--cyan-text); border-color: var(--cyan-text); color: #000; font-weight: 800; }
+
+    .file-upload-box { margin-bottom: 20px; }
+    input[type="file"] {
+      background: #1a122c; padding: 12px; border-radius: 12px;
+      border: 1px dashed var(--card-border); color: var(--text-muted); font-size: 13px; cursor: pointer; width: 100%; box-sizing: border-box;
+    }
+    input[type="file"]::file-selector-button {
+      background: var(--primary-orange); color: white; border: none; padding: 8px 14px;
+      border-radius: 8px; font-weight: 800; cursor: pointer; margin-right: 12px; transition: 0.3s;
+    }
+    input[type="file"]::file-selector-button:hover { background: #ff7700; filter: brightness(1.1); }
+
+    .btn-submit-order {
+      width: 100%;
+      background: linear-gradient(90deg, #8A2BE2, #4B0082);
+      color: #ffffff;
+      border: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
+      animation: latidoMorado 2s infinite;
+      margin-top: 10px;
+    }
+    .btn-submit-order:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(138, 43, 226, 0.7); filter: brightness(1.1); }
+    @keyframes latidoMorado { 0%, 100% { box-shadow: 0 0 15px rgba(138,43,226,0.4); } 50% { box-shadow: 0 0 30px rgba(138,43,226,0.7); } }
+
+    .overlay-pantalla { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(12px); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+    
+    .modal-anime-card {
+      background: var(--panel-bg);
+      border: 2px solid var(--cyan-text);
+      border-radius: 28px;
+      padding: 35px 25px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(0, 255, 204, 0.35), inset 0 0 20px rgba(0, 255, 204, 0.1);
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.8) translateY(-20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+    .anime-avatar-box {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 20px auto;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 2px solid var(--cyan-text);
+      background: #18122a;
+      box-shadow: 0 0 25px rgba(0, 255, 204, 0.4);
+    }
+    .anime-avatar-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .anime-status-text {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--cyan-text);
+      letter-spacing: 0.8px;
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+      margin-bottom: 20px;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background: #1a122c;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+    .progress-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #00c6ff, #00ffcc);
+      box-shadow: 0 0 15px #00ffcc;
+      transition: width 0.3s linear;
+    }
+
+    .modal-content { background: var(--panel-bg); border: 2px solid var(--primary-orange); border-radius: 22px; padding: 30px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 0 40px rgba(255, 102, 0, 0.3); }
+    .modal-titulo { color: var(--primary-orange); margin-top: 0; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 22px; margin-bottom: 20px; text-transform: uppercase; }
+    .modal-datos { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: left; border: 1px solid var(--card-border); }
+    .modal-datos p { margin: 8px 0; font-size: 14px; color: var(--text-main); font-weight: 600; }
+    .modal-datos span { float: right; color: var(--cyan-text); font-weight: 800; }
+    .modal-nota { color: #ffdd00; font-size: 13px; line-height: 1.5; margin-bottom: 25px; background: rgba(255, 204, 0, 0.08); padding: 12px; border-radius: 8px; border-left: 4px solid #ffdd00; text-align: left; }
+    
+    .modal-botones { display: flex; gap: 10px; }
+    .btn-revisar, .btn-confirmar { flex: 1; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; border: none; font-size: 14px; transition: 0.3s; text-transform: uppercase; font-family: 'Montserrat', sans-serif; }
+    .btn-revisar { background: #334155; color: white; }
+    .btn-revisar:hover { background: #475569; }
+    .btn-confirmar { background: var(--primary-gradient); color: white; }
+    .btn-confirmar:hover { transform: translateY(-2px); box-shadow: 0 0 15px rgba(255, 102, 0, 0.6); }
+
+    #modalPagoInsuficiente .modal-content, #modalPagoNoEncontrado .modal-content { border-color: var(--danger); box-shadow: 0 0 40px rgba(255, 51, 51, 0.3); }
+    #modalPagoInsuficiente .modal-titulo, #modalPagoNoEncontrado .modal-titulo { color: var(--danger); }
+    
+    #pantallaExito { display: none; text-align: center; }
+    .icono-exito { font-size: 50px; margin-bottom: 10px; }
+    .tx-caja { background: #1a122c; border: 2px dashed var(--cyan-text); padding: 15px; border-radius: 12px; margin: 20px 0; font-size: 20px; font-weight: 900; color: var(--cyan-text); letter-spacing: 2px; user-select: all; }
+    .alerta-guardar { color: var(--primary-orange); font-size: 12px; font-weight: 700; margin-bottom: 25px; }
+    .btn-volver-inicio { background: var(--primary-orange); color: #000; padding: 14px 28px; border-radius: 10px; font-weight: 900; text-transform: uppercase; text-decoration: none; display: inline-block; transition: 0.3s; font-family: 'Montserrat', sans-serif; }
+    .btn-volver-inicio:hover { background: #ffaa22; box-shadow: 0 0 15px rgba(255, 102, 0, 0.6); transform: translateY(-2px); }
+
+    .loading-spinner { text-align: center; grid-column: span 2; color: var(--text-muted); padding: 30px 0; font-size: 14px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- MODAL DE CONFIRMACIÓN PREVIA -->
+  <div id="modalConfirmacion" class="overlay-pantalla">
+    <div class="modal-content">
+      <h2 class="modal-titulo">⚠️ Confirma tu Pedido</h2>
+      <div class="modal-datos">
+        <p>ID de Jugador: <span id="resumenId"></span></p>
+        <p>Jugador: <span id="resumenNombreJugador"></span></p>
+        <p>Recibirás: <span id="resumenPaquete"></span></p>
+        <p>Tu Pago: <span id="resumenMonto"></span></p>
+      </div>
+      <div class="modal-nota">Por favor, <strong>revisa detalladamente que tu ID sea el correcto</strong>, ya que las recargas a cuentas equivocadas no son reembolsables.</div>
+      <div class="modal-botones">
+        <button class="btn-revisar" onclick="cerrarModal()">Revisar</button>
+        <button class="btn-confirmar" id="btnConfirmar" onclick="iniciarCargaConTiemposAleatorios()">¡Sí, Enviar!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE PAGO NO ENCONTRADO -->
+  <div id="modalPagoNoEncontrado" class="overlay-pantalla">
+    <div class="modal-content">
+      <h2 class="modal-titulo">❌ Pago No Encontrado</h2>
+      <p style="color: var(--text-main); font-size: 14px; margin-bottom: 20px; font-weight: 600;">No encontramos tu referencia o ya fue utilizada.</p>
+      <div class="modal-nota" style="background: rgba(255, 51, 51, 0.1); border-left-color: var(--danger); color: #ff9999;">
+        ⚠️ <strong>Por favor, verifica lo siguiente:</strong><br><br>1. Que ingresaste correctamente los <strong>últimos 5 dígitos</strong> de tu referencia.<br><br>2. Que el pago no haya sido usado previamente.
+      </div>
+      <button class="btn-accion" style="background: #334155; color: white; padding: 12px; border:none; border-radius:10px; font-weight:800; cursor:pointer; width:100%; text-transform:uppercase;" onclick="cerrarModalNoEncontrado()">Revisar Datos</button>
+    </div>
+  </div>
+
+  <!-- MODAL DE PAGO INSUFICIENTE -->
+  <div id="modalPagoInsuficiente" class="overlay-pantalla">
+    <div class="modal-content">
+      <h2 class="modal-titulo">❌ Pago Insuficiente</h2>
+      <div class="modal-datos">
+        <p>Paquete seleccionado: <span id="montoRequeridoUI">--</span></p>
+        <p>Pago encontrado: <span id="montoEncontradoUI" style="color: var(--danger);">--</span></p>
+        <hr style="border-color: rgba(255,255,255,0.1); margin: 10px 0;">
+        <p>Aún te faltan: <span id="montoFaltanteUI" style="color: #ffdd00; font-size: 17px;">--</span></p>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px; font-weight: 600; line-height: 1.4;">Si realizaste otro pago móvil para completar el monto, ingresa la segunda referencia aquí:</p>
+      <input type="text" inputmode="numeric" autocomplete="one-time-code" spellcheck="false" id="referencia2" placeholder="Últimos 5 dígitos del 2do pago" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-field" style="margin-bottom: 10px;">
+      <div id="errorRef2" style="color: var(--danger); font-size: 13px; font-weight: bold; margin-bottom: 15px; display: none;">Pago no encontrado o insuficiente.</div>
+      <div class="modal-botones">
+        <button class="btn-revisar" onclick="cerrarModalInsuficiente()">Cancelar</button>
+        <button class="btn-confirmar" id="btnConfirmar2" onclick="procesarSegundoPago()" style="background: linear-gradient(90deg, #00c6ff, #0072ff);">Completar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA DE CARGA CON GIF JUGANDO.GIF Y BARRA DE PROGRESO -->
+  <div id="pantallaProcesando" class="overlay-pantalla">
+    <div class="modal-anime-card" id="cajaContenedorAnime">
+      <div class="anime-avatar-box">
+        <img src="jugando.gif" alt="Buscando pago anime">
+      </div>
+      <div class="anime-status-text" id="textoContadorAnimado">
+        📡 Sincronizando... (3s)
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="barraProgresoFill"></div>
+      </div>
+    </div>
+
+    <!-- PANTALLA DE ÉXITO FINAL -->
+    <div class="modal-content" id="pantallaExito" style="display: none; border-color: var(--cyan-text); box-shadow: 0 0 40px rgba(0, 255, 204, 0.3);">
+      <div class="icono-exito">✅</div>
+      <h2 style="color: var(--cyan-text); margin-top:0; font-family: 'Montserrat', sans-serif;">¡Recarga Finalizada!</h2>
+      <p style="color: var(--text-main); font-size: 14px;">Tu pedido ha sido procesado correctamente por el servidor.</p>
+      <div class="tx-caja" id="codigoTxn">TXN-XXXXXX</div>
+      <p class="alerta-guardar">⚠️ IMPORTANTE: Guarda este ID de transacción o tómale capture en caso de presentar algún problema.</p>
+      <a href="index.html" class="btn-volver-inicio">Volver al Inicio</a>
+    </div>
+  </div>
+
+  <!-- TARJETA PRINCIPAL -->
+  <div class="main-card">
+    <div class="top-nav"><a href="index.html" class="btn-back">◄ Volver al Inicio</a></div>
+    
+    <h1 class="title-banner">🔥 FREE FIRE 🔥</h1>
+
+    <div class="id-section">
+      <div class="step-title">1. INGRESA TU ID DE JUGADOR</div>
+      <div class="id-input-group">
+        <input type="number" id="inputPlayerId" class="input-field" placeholder="Ej: 123456789" required>
+        <button type="button" id="btnVerifyId" class="btn-verify">VERIFICAR</button>
+      </div>
+      <div id="idStatus" class="id-status"></div>
+    </div>
+
+    <div class="step-title">2. SELECCIONA TU RECARGA</div>
+    <div class="catalog-grid" id="catalogContainer">
+      <div class="loading-spinner">Cargando paquetes de diamantes...</div>
+    </div>
+
+    <!-- SECCIÓN INFERIOR DE PAGO -->
+    <div class="checkout-section" id="checkoutSection">
+      
+      <div class="step-title">3. CÓDIGO DE DESCUENTO (OPCIONAL)</div>
+      <div class="id-input-group" style="margin-bottom: 20px;">
+        <input type="text" id="inputCupon" class="input-field" placeholder="EJ: PEPEMAN" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+        <button type="button" id="btnValidarCupon" onclick="validarCuponFirebase()" style="background: linear-gradient(90deg, #00c6ff, #0072ff); color: white; border: none; border-radius: 12px; padding: 0 18px; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 13px; cursor: pointer; text-transform: uppercase;">Validar</button>
+      </div>
+      <div id="mensajeDescuento" style="font-size: 13px; font-weight: bold; min-height: 18px; margin-bottom: 15px;"></div>
+
+      <div class="step-title">4. REALIZA EL PAGO MÓVIL</div>
+      <div class="bank-card">
+        <div id="bankInfoContainer">
+          <div class="bank-row">Banco: <span style="color:var(--primary-orange);">Cargando...</span></div>
+          <div class="bank-row">Teléfono: <span style="color:var(--primary-orange);">Cargando...</span></div>
+          <div class="bank-row">Cédula: <span style="color:var(--primary-orange);">Cargando...</span></div>
+        </div>
+        <hr style="border-color: rgba(255,102,0,0.2); margin: 12px 0;">
+        <div class="bank-row">Total a pagar: <span id="montoPagar" style="color: var(--cyan-text); font-size: 18px;">0,00 Bs</span></div>
+      </div>
+      <button type="button" id="btnCopiarDatos" class="btn-copy" onclick="copiarDatosBanco()">📋 Copiar datos bancarios</button>
+
+      <div class="file-upload-box">
+        <div class="step-title">5. SUBE TU COMPROBANTE (CAPTURE)</div>
+        <input type="file" id="inputComprobante" accept="image/*" onchange="analizarCapture(this)">
+        
+        <div id="cajaIA" style="display: none; margin-top: 15px; padding: 15px; background: rgba(0, 255, 204, 0.05); border: 1px dashed var(--cyan-text); border-radius: 12px;">
+          <div id="cargandoIA" style="color: var(--cyan-text); font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 10px;">
+            <span>Leyendo comprobante en el dispositivo...</span>
+          </div>
+          <div id="resultadoIA" style="display: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+            <span style="color: var(--text-main); font-size: 13px; font-weight: bold;">Referencia detectada: <span id="refIA" style="font-size: 16px; color: var(--primary-orange); letter-spacing: 1px;"></span></span>
+            <button type="button" onclick="usarReferenciaIA()" style="background: var(--primary-gradient); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 12px;">Usar Número</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-title">6. CONFIRMA TU PAGO</div>
+      <div style="margin-bottom: 15px;">
+        <input type="text" inputmode="numeric" autocomplete="one-time-code" spellcheck="false" id="inputReferencia" class="input-field" placeholder="Solo los últimos 5 dígitos" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+      </div>
+
+      <button type="button" id="btnProcesarPedido" class="btn-submit-order" onclick="abrirModal()">🚀 PROCESAR RECARGA</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, runTransaction, doc, getDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBIdEh_HzzB8dnzG8qkPQYOIo2kSb_F6xQ",
+      authDomain: "levelupstore-87d4d.firebaseapp.com",
+      projectId: "levelupstore-87d4d",
+      storageBucket: "levelupstore-87d4d.firebasestorage.app",
+      messagingSenderId: "948536026825",
+      appId: "1:948536026825:web:80520e4be7514a134d8f18",
+      measurementId: "G-3F8E5RCFS6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    let paqueteSeleccionado = null;
+    let precioElegidoNumerico = 0;
+    let precioFinalNumerico = 0;
+    let descuentoAplicadoPorcentaje = 0;
+    let cuponDocIdEncontrado = null;
+    let idVerificado = false;
+    let nombreJugadorVerificado = "";
+    let datosBancoGlobal = { banco: "", telefono: "", cedula: "" };
+    let isProcessing = false;
+    
+    let primerPagoGlobal = null;
+    let referencia1Global = "";
+    
+    // RUTAS SEGURAS (Apuntan a las funciones serverless de Vercel y ocultan los enlaces reales)
+    const SCRIPT_VALIDADOR_URL = '/api/verificar';
+    const SCRIPT_RECARGAS_URL = '/api/recargar';
+
+    window.formatearMontoVES = function(montoStr) {
+      if (montoStr === undefined || montoStr === null) return 0;
+      if (typeof montoStr === 'number') return montoStr;
+      let m = String(montoStr).trim().replace(/[^0-9.,-]/g, '');
+      if (!m) return 0;
+      let lastDot = m.lastIndexOf('.');
+      let lastComma = m.lastIndexOf(',');
+      let lastSeparatorIndex = Math.max(lastDot, lastComma);
+      if (lastSeparatorIndex === -1) { return parseFloat(m) || 0; }
+      let parteEntera = m.substring(0, lastSeparatorIndex).replace(/[^0-9-]/g, '');
+      let parteDecimal = m.substring(lastSeparatorIndex + 1).replace(/[^0-9]/g, '');
+      if (parteDecimal.length >= 3) { parteEntera = parteEntera + parteDecimal; parteDecimal = "00"; }
+      return parseFloat(parteEntera + "." + parteDecimal) || 0;
+    };
+
+    window.formatearDineroVisual = function(montoNumerico) {
+      let numStr = Number(montoNumerico).toFixed(2);
+      let partes = numStr.split('.');
+      partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return partes.join(','); 
+    };
+
+    async function cargarDatosBancarios() {
+      try {
+        const docSnap = await getDoc(doc(db, "configuracion", "pago_movil"));
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          datosBancoGlobal = data;
+          document.getElementById('bankInfoContainer').innerHTML = `
+            <div class="bank-row">Banco: <span>${data.banco}</span></div>
+            <div class="bank-row">Teléfono: <span>${data.telefono}</span></div>
+            <div class="bank-row">Cédula: <span>${data.cedula}</span></div>
+          `;
+        }
+      } catch (error) {
+        console.error("Error cargando datos bancarios:", error);
+      }
+    }
+
+    function cargarCatalogoCliente() {
+      const container = document.getElementById('catalogContainer');
+      const catRef = collection(db, "catalogo_freefire");
+
+      onSnapshot(catRef, (snapshot) => {
+        container.innerHTML = '';
+        if (snapshot.empty) {
+          container.innerHTML = '<div class="loading-spinner">No hay paquetes disponibles.</div>';
+          return;
+        }
+
+        let paquetes = [];
+        snapshot.forEach((docSnap) => { paquetes.push({ id: docSnap.id, ...docSnap.data() }); });
+        paquetes.sort((a, b) => window.formatearMontoVES(a.diamantes) - window.formatearMontoVES(b.diamantes));
+
+        paquetes.forEach((item, index) => {
+          const card = document.createElement('div');
+          const esUltimoImpar = (paquetes.length % 2 !== 0) && (index === paquetes.length - 1);
+          card.className = `product-card ${esUltimoImpar || item.spanFull ? 'full-width' : ''}`;
+          card.innerHTML = `
+            <div class="diamonds-count">${item.diamantes} 💎</div>
+            <div class="price-box"><div class="price-text">${item.precio} Bs</div></div>
+          `;
+          card.addEventListener('click', () => seleccionarProducto(card, item));
+          container.appendChild(card);
+        });
+      });
+    }
+
+    function seleccionarProducto(cardElement, paquete) {
+      document.querySelectorAll('.product-card').forEach(c => c.classList.remove('selected'));
+      cardElement.classList.add('selected');
+      paqueteSeleccionado = paquete;
+      precioElegidoNumerico = window.formatearMontoVES(paquete.precio);
+      precioFinalNumerico = precioElegidoNumerico;
+      document.getElementById('montoPagar').innerText = `${paquete.precio} Bs`;
+      document.getElementById('inputCupon').value = "";
+      document.getElementById('mensajeDescuento').innerHTML = "";
+      cuponDocIdEncontrado = null;
+      verificarEstadoDesbloqueo();
+    }
+
+    window.validarCuponFirebase = async function() {
+      if (!precioElegidoNumerico) { alert("Selecciona un paquete primero."); return; }
+      const codigoInput = document.getElementById('inputCupon').value.trim().toUpperCase();
+      const cajaMonto = document.getElementById('montoPagar');
+      const cajaMsjDesc = document.getElementById('mensajeDescuento');
+      
+      if (codigoInput === "") {
+        precioFinalNumerico = precioElegidoNumerico;
+        descuentoAplicadoPorcentaje = 0;
+        cuponDocIdEncontrado = null;
+        cajaMonto.textContent = `${paqueteSeleccionado.precio} Bs`;
+        cajaMsjDesc.innerHTML = "";
+        return;
+      }
+      try {
+        const q = query(collection(db, "cupones"), where("codigo", "==", codigoInput));
+        const querySnapshot = await getDocs(q);
+        let cuponEncontrado = null;
+        
+        querySnapshot.forEach((docSnap) => {
+          cuponEncontrado = { id: docSnap.id, ...docSnap.data() };
+        });
+
+        if (cuponEncontrado) {
+          if ((cuponEncontrado.usosActuales || 0) >= (cuponEncontrado.limiteUsos || 0)) {
+            precioFinalNumerico = precioElegidoNumerico;
+            cajaMonto.textContent = `${paqueteSeleccionado.precio} Bs`;
+            cajaMsjDesc.innerHTML = "❌ Este cupón ya alcanzó su límite de usos"; cajaMsjDesc.style.color = "var(--danger)"; return;
+          }
+          cuponDocIdEncontrado = cuponEncontrado.id;
+          descuentoAplicadoPorcentaje = parseFloat(cuponEncontrado.porcentaje);
+          precioFinalNumerico = precioElegidoNumerico - (precioElegidoNumerico * (descuentoAplicadoPorcentaje / 100));
+          cajaMonto.innerHTML = `<s style="color: var(--danger); font-size: 14px;">${paqueteSeleccionado.precio} Bs</s> <br><span style="font-size: 20px;">${window.formatearDineroVisual(precioFinalNumerico)} Bs</span>`;
+          cajaMsjDesc.innerHTML = `✅ ¡Cupón aplicado (${descuentoAplicadoPorcentaje}% de descuento)!`; cajaMsjDesc.style.color = "var(--cyan-text)";
+        } else {
+          precioFinalNumerico = precioElegidoNumerico;
+          cajaMonto.textContent = `${paqueteSeleccionado.precio} Bs`;
+          cajaMsjDesc.innerHTML = "❌ Cupón inválido"; cajaMsjDesc.style.color = "var(--danger)";
+        }
+      } catch (error) { console.error(error); }
+    };
+
+    function verificarEstadoDesbloqueo() {
+      const checkoutSection = document.getElementById('checkoutSection');
+      if (idVerificado && paqueteSeleccionado !== null) {
+        checkoutSection.classList.add('active');
+      } else {
+        checkoutSection.classList.remove('active');
+      }
+    }
+
+    document.getElementById('btnVerifyId').addEventListener('click', async () => {
+      const idInput = document.getElementById('inputPlayerId').value.trim();
+      const statusDiv = document.getElementById('idStatus');
+      const btnVerify = document.getElementById('btnVerifyId');
+
+      if (idInput.length < 5) {
+        statusDiv.style.display = 'block'; statusDiv.style.color = 'var(--danger)'; 
+        statusDiv.innerText = '❌ Ingresa un ID válido de Free Fire.';
+        idVerificado = false; verificarEstadoDesbloqueo(); return;
+      }
+
+      try {
+        btnVerify.disabled = true; btnVerify.innerText = "BUSCANDO...";
+        statusDiv.style.display = 'block'; statusDiv.style.color = 'var(--cyan-text)';
+        statusDiv.innerText = '⏳ Verificando ID en el servidor...';
+
+        const response = await fetch(SCRIPT_VALIDADOR_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: idInput })
+        });
+        const data = response ? await response.json() : null;
+
+        if (data && data.valid === true && data.player_name) {
+          idVerificado = true;
+          nombreJugadorVerificado = data.player_name;
+          statusDiv.style.color = 'var(--cyan-text)';
+          statusDiv.innerHTML = `✔️ Jugador: <strong style="color: #fff;">${nombreJugadorVerificado}</strong>`;
+        } else {
+          idVerificado = false;
+          statusDiv.style.color = 'var(--danger)';
+          statusDiv.innerText = '❌ ID no encontrado o inválido.';
+        }
+      } catch (error) {
+        idVerificado = false;
+        statusDiv.style.color = 'var(--danger)';
+        statusDiv.innerText = '❌ Error de conexión al verificar el ID.';
+      } finally {
+        btnVerify.disabled = false; btnVerify.innerText = "VERIFICAR";
+        verificarEstadoDesbloqueo();
+      }
+    });
+
+    document.getElementById('inputPlayerId').addEventListener('input', () => {
+      idVerificado = false; nombreJugadorVerificado = "";
+      document.getElementById('idStatus').style.display = 'none';
+      verificarEstadoDesbloqueo();
+    });
+
+    window.analizarCapture = async function(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const cajaIA = document.getElementById('cajaIA');
+      const resultadoIA = document.getElementById('resultadoIA');
+      const refIA = document.getElementById('refIA');
+      const cargandoIA = document.getElementById('cargandoIA');
+
+      if (!file.type.startsWith("image/")) return;
+      if (typeof Tesseract === 'undefined') return;
+
+      cajaIA.style.display = 'block'; cargandoIA.style.display = 'flex'; resultadoIA.style.display = 'none';
+
+      try {
+        const resultadoOCR = await Tesseract.recognize(file, 'eng+spa');
+        const textoLimpio = resultadoOCR.data.text;
+        const textoSinFechas = textoLimpio.replace(/\b(202[0-9]|20[0-2][0-9]|[0-3][0-9][-\/][0-1][0-9][-\/][0-9]{2,4})\b/g, '');
+        
+        let numerosEncontrados = "";
+        const regexEtiqueta = /(?:referencia|operacion|operación|nro|ref|es|recibo|doc)[:\s]*([0-9]{5,20})/i;
+        const matchEtiqueta = textoSinFechas.match(regexEtiqueta);
+
+        if (matchEtiqueta && matchEtiqueta[1]) {
+          numerosEncontrados = matchEtiqueta[1];
+        } else {
+          let posiblesNumeros = textoSinFechas.match(/\b[0-9]{5,20}\b/g);
+          if (posiblesNumeros && posiblesNumeros.length > 0) {
+            numerosEncontrados = posiblesNumeros[posiblesNumeros.length - 1];
+          }
+        }
+
+        if (numerosEncontrados && numerosEncontrados.length >= 5) {
+          refIA.textContent = numerosEncontrados.slice(-5);
+          cargandoIA.style.display = 'none'; resultadoIA.style.display = 'flex';
+        } else {
+          cajaIA.style.display = 'none';
+        }
+      } catch (e) { cajaIA.style.display = 'none'; }
+    };
+
+    window.usarReferenciaIA = function() {
+      document.getElementById('inputReferencia').value = document.getElementById('refIA').textContent;
+    };
+
+    window.copiarDatosBanco = function() {
+      let textoCopiar = `Banco: ${datosBancoGlobal.banco}\nTeléfono: ${datosBancoGlobal.telefono}\nCédula: ${datosBancoGlobal.cedula}`;
+      navigator.clipboard.writeText(textoCopiar).then(() => {
+        const btn = document.getElementById('btnCopiarDatos');
+        btn.innerHTML = "✅ ¡Copiado con éxito!"; btn.classList.add('copied');
+        setTimeout(() => { btn.innerHTML = "📋 Copiar datos bancarios"; btn.classList.remove('copied'); }, 3000);
+      });
+    };
+
+    window.abrirModal = function() {
+      const id = document.getElementById('inputPlayerId').value.trim();
+      const ref = document.getElementById('inputReferencia').value.trim();
+      const fileInput = document.getElementById('inputComprobante');
+
+      if (id.length < 5 || !idVerificado) { alert("Por favor, ingresa y verifica tu ID de jugador."); return; }
+      if (!paqueteSeleccionado) { alert("Selecciona un paquete de diamantes."); return; }
+      if (!fileInput.files[0]) { alert("Sube el comprobante de pago (capture)."); return; }
+      if (ref.length !== 5) { alert("Ingresa EXACTAMENTE los últimos 5 dígitos de tu referencia."); return; }
+
+      document.getElementById('resumenId').textContent = id;
+      document.getElementById('resumenNombreJugador').textContent = nombreJugadorVerificado;
+      document.getElementById('resumenPaquete').textContent = `${paqueteSeleccionado.diamantes} Diamantes`;
+      document.getElementById('resumenMonto').textContent = window.formatearDineroVisual(precioFinalNumerico) + " Bs";
+      document.getElementById('modalConfirmacion').style.display = 'flex';
+    };
+
+    window.cerrarModal = function() { document.getElementById('modalConfirmacion').style.display = 'none'; };
+    window.cerrarModalNoEncontrado = function() { document.getElementById('modalPagoNoEncontrado').style.display = 'none'; };
+    window.cerrarModalInsuficiente = async function() { 
+      document.getElementById('modalPagoInsuficiente').style.display = 'none'; 
+      if (primerPagoGlobal && primerPagoGlobal.docRef) {
+          try { await updateDoc(primerPagoGlobal.docRef, { estado: "Verificado" }); } catch(e) {}
+          primerPagoGlobal = null; referencia1Global = "";
+      }
+    };
+
+    function esperarTiempoAleatorio(mensajeBase) {
+      return new Promise((resolve) => {
+        let segundosTotales = Math.floor(Math.random() * 10) + 1;
+        let segundosRestantes = segundosTotales;
+        const textoElem = document.getElementById('textoContadorAnimado');
+        const barraFill = document.getElementById('barraProgresoFill');
+        
+        barraFill.style.width = '0%';
+
+        const intervalo = setInterval(() => {
+          let porcentaje = ((segundosTotales - segundosRestantes) / segundosTotales) * 100;
+          barraFill.style.width = porcentaje + '%';
+          
+          textoElem.innerHTML = `📡 ${mensajeBase}... (${segundosRestantes}s)`;
+          segundosRestantes--;
+
+          if (segundosRestantes < 0) {
+            clearInterval(intervalo);
+            barraFill.style.width = '100%';
+            resolve();
+          }
+        }, 1000);
+      });
+    }
+
+    async function buscarPagoEnFirebase(referenciaUsuario, precioRequerido) {
+      const refLimpiaUsuario = String(referenciaUsuario).replace(/\D/g, '');
+      const querySnapshot = await getDocs(collection(db, "Pagos"));
+      let candidatoDocRef = null;
+
+      querySnapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const refCruda = String(data.referencia || "");
+        const refGuardadaNumeros = refCruda.replace(/\D/g, ''); 
+        const estadoActual = String(data.estado || "").toLowerCase().trim();
+
+        if (estadoActual.includes("usada")) return;
+
+        if (refGuardadaNumeros.length >= 5 && refGuardadaNumeros.endsWith(refLimpiaUsuario)) {
+           candidatoDocRef = docSnap.ref;
+        }
+      });
+
+      if (!candidatoDocRef) return null;
+
+      try {
+          let resultadoTransaccion = await runTransaction(db, async (transaction) => {
+              const pagoDoc = await transaction.get(candidatoDocRef);
+              if (!pagoDoc.exists()) throw "No existe";
+              const pData = pagoDoc.data();
+              const estActual = String(pData.estado || "").toLowerCase().trim();
+              
+              if (estActual.includes("usada")) throw "Ya usada";
+
+              let montoGuardado = window.formatearMontoVES(pData.monto);
+              let requeridoExacto = Math.round(precioRequerido * 100) / 100;
+              let verificacion1 = Math.round(montoGuardado * 100) / 100;
+              
+              transaction.update(candidatoDocRef, { estado: "Usando" });
+              
+              if (verificacion1 >= (requeridoExacto - 0.05)) {
+                  return { status: "ok", id: candidatoDocRef.id, docRef: candidatoDocRef, monto: verificacion1, telefono: String(pData.telefono || "Pago Móvil"), insuficiente: false };
+              } else {
+                  return { status: "ok", id: candidatoDocRef.id, docRef: candidatoDocRef, monto: verificacion1, telefono: String(pData.telefono || "Pago Móvil"), insuficiente: true };
+              }
+          });
+          return resultadoTransaccion; 
+      } catch (e) { 
+          return null; 
+      }
+    }
+
+    window.iniciarCargaConTiemposAleatorios = async function() {
+      const btnConfirmar = document.getElementById('btnConfirmar');
+      if (isProcessing) return;
+      isProcessing = true; btnConfirmar.disabled = true;
+
+      const referenciaUsuario = document.getElementById('inputReferencia').value.trim();
+      cerrarModal(); 
+      
+      document.getElementById('pantallaProcesando').style.display = 'flex';
+
+      const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let codigoTxnGenerado = 'TXN-';
+      for (let i = 0; i < 6; i++) codigoTxnGenerado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+      document.getElementById('codigoTxn').textContent = codigoTxnGenerado;
+
+      try {
+          await esperarTiempoAleatorio("Sincronizando pasarela");
+          await esperarTiempoAleatorio("Buscando pago en sistema");
+
+          let resultadoPago = await buscarPagoEnFirebase(referenciaUsuario, precioFinalNumerico);
+
+          if (!resultadoPago) {
+             document.getElementById('pantallaProcesando').style.display = 'none';
+             document.getElementById('modalPagoNoEncontrado').style.display = 'flex';
+             isProcessing = false; btnConfirmar.disabled = false;
+             return; 
+          }
+
+          if (resultadoPago.insuficiente) {
+             document.getElementById('pantallaProcesando').style.display = 'none';
+             primerPagoGlobal = resultadoPago; referencia1Global = referenciaUsuario;
+             let faltante = precioFinalNumerico - resultadoPago.monto;
+             
+             document.getElementById('montoRequeridoUI').textContent = window.formatearDineroVisual(precioFinalNumerico) + " Bs";
+             document.getElementById('montoEncontradoUI').textContent = window.formatearDineroVisual(resultadoPago.monto) + " Bs";
+             document.getElementById('montoFaltanteUI').textContent = window.formatearDineroVisual(faltante) + " Bs";
+             document.getElementById('modalPagoInsuficiente').style.display = 'flex';
+             isProcessing = false; btnConfirmar.disabled = false;
+             return;
+          }
+
+          document.getElementById('textoContadorAnimado').innerHTML = "📡 Subiendo comprobante seguro...";
+          let captureUrl = await subirCaptureFirebase(codigoTxnGenerado);
+          await enviarPedidoUnico(resultadoPago, referenciaUsuario, captureUrl);
+
+      } catch (err) {
+          alert("Error inesperado al procesar el pago.");
+          document.getElementById('pantallaProcesando').style.display = 'none';
+          isProcessing = false; btnConfirmar.disabled = false;
+      }
+    };
+
+    window.procesarSegundoPago = async function() {
+      const ref2 = document.getElementById('referencia2').value.trim();
+      const errorDiv = document.getElementById('errorRef2');
+      if (ref2.length !== 5) { errorDiv.textContent = "Ingresa los 5 dígitos de la segunda referencia."; errorDiv.style.display = "block"; return; }
+      if (isProcessing) return;
+      isProcessing = true;
+
+      try {
+          document.getElementById('modalPagoInsuficiente').style.display = 'none';
+          document.getElementById('pantallaProcesando').style.display = 'flex';
+
+          await esperarTiempoAleatorio("Sincronizando");
+          await esperarTiempoAleatorio("Buscando 2do pago");
+
+          let faltante = precioFinalNumerico - primerPagoGlobal.monto;
+          let resultadoPago2 = await buscarPagoEnFirebase(ref2, faltante);
+
+          if (!resultadoPago2) {
+              document.getElementById('pantallaProcesando').style.display = 'none';
+              errorDiv.textContent = "❌ 2do Pago no encontrado o ya usado."; errorDiv.style.display = "block"; isProcessing = false; return;
+          }
+          if (resultadoPago2.id === primerPagoGlobal.id) {
+              document.getElementById('pantallaProcesando').style.display = 'none';
+              errorDiv.textContent = "❌ Esta referencia ya fue utilizada en este pago."; errorDiv.style.display = "block"; isProcessing = false; return;
+          }
+          
+          let captureUrl = await subirCaptureFirebase(document.getElementById('codigoTxn').textContent);
+          const playerId = document.getElementById('inputPlayerId').value.trim();
+
+          document.getElementById('textoContadorAnimado').innerHTML = "🎮 Entregando diamantes...";
+          
+          const respuestaServidor = await fetch(SCRIPT_RECARGAS_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              id: playerId, 
+              paquete: `${paqueteSeleccionado.diamantes} Diamantes`, 
+              monto: precioFinalNumerico, 
+              referencia: `${referencia1Global} + ${ref2}`, 
+              codigoTxn: document.getElementById('codigoTxn').textContent 
+            })
+          });
+          const resultadoFazer = await respuestaServidor.json();
+          if (resultadoFazer.status !== "success") throw new Error(resultadoFazer.message || "Proveedor rechazó recarga.");
+
+          await updateDoc(primerPagoGlobal.docRef, { estado: "Usada" });
+          await updateDoc(resultadoPago2.docRef, { estado: "Usada" });
+
+          await addDoc(collection(db, "pedidos"), {
+              juego_o_producto: `Free Fire (${paqueteSeleccionado.diamantes} Diamantes)`,
+              id_jugador: `${playerId} (${nombreJugadorVerificado})`,
+              telefono: `${primerPagoGlobal.telefono} / ${resultadoPago2.telefono}`,
+              referencia: `${referencia1Global} + ${ref2}`,
+              montoEsperado: window.formatearDineroVisual(precioFinalNumerico) + " Bs",
+              montoPagado: window.formatearDineroVisual(primerPagoGlobal.monto + resultadoPago2.monto) + " Bs",
+              cupon: cuponDocIdEncontrado ? `Aplicado (${descuentoAplicadoPorcentaje}%)` : "Ninguno",
+              estado: "Completado", timestamp: new Date(), captureUrl: captureUrl
+          });
+
+          if (cuponDocIdEncontrado) {
+              const cSnap = await getDocs(collection(db, "cupones"));
+              cSnap.forEach(async (d) => { if (d.id === cuponDocIdEncontrado) await updateDoc(doc(db, "cupones", cuponDocIdEncontrado), { usosActuales: (d.data().usosActuales || 0) + 1 }); });
+          }
+          mostrarExitoFinal();
+      } catch (error) {
+          alert("Error: " + error.message);
+          document.getElementById('pantallaProcesando').style.display = 'none';
+          isProcessing = false;
+      }
+    };
+
+    async function enviarPedidoUnico(resultadoPago, referenciaUsuario, captureUrl) {
+      const playerId = document.getElementById('inputPlayerId').value.trim();
+      const cuponUsado = document.getElementById('inputCupon').value.trim();
+
+      try {
+        document.getElementById('textoContadorAnimado').innerHTML = "🎮 Entregando diamantes...";
+
+        const respuestaServidor = await fetch(SCRIPT_RECARGAS_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            id: playerId, 
+            paquete: `${paqueteSeleccionado.diamantes} Diamantes`, 
+            monto: precioFinalNumerico, 
+            referencia: referenciaUsuario, 
+            codigoTxn: document.getElementById('codigoTxn').textContent 
+          })
+        });
+        const resultadoFazer = await respuestaServidor.json();
+        if (resultadoFazer.status !== "success") throw new Error(resultadoFazer.message || "Proveedor rechazó recarga.");
+
+        await updateDoc(resultadoPago.docRef, { estado: "Usada" });
+
+        await addDoc(collection(db, "pedidos"), {
+          juego_o_producto: `Free Fire (${paqueteSeleccionado.diamantes} Diamantes)`,
+          id_jugador: `${playerId} (${nombreJugadorVerificado})`,
+          telefono: resultadoPago.telefono,
+          referencia: referenciaUsuario,
+          montoEsperado: window.formatearDineroVisual(precioFinalNumerico) + " Bs",
+          montoPagado: window.formatearDineroVisual(resultadoPago.monto) + " Bs",
+          cupon: cuponUsado ? `${cuponUsado} (${descuentoAplicadoPorcentaje}%)` : "Ninguno",
+          estado: "Completado", timestamp: new Date(), captureUrl: captureUrl
+        });
+
+        if (cuponDocIdEncontrado) {
+          const cSnap = await getDocs(collection(db, "cupones"));
+          cSnap.forEach(async (d) => { if (d.id === cuponDocIdEncontrado) { await updateDoc(doc(db, "cupones", cuponDocIdEncontrado), { usosActuales: (d.data().usosActuales || 0) + 1 }); } });
+        }
+        mostrarExitoFinal();
+      } catch (error) {
+        alert("Error: " + error.message);
+        document.getElementById('pantallaProcesando').style.display = 'none';
+        isProcessing = false;
+        throw error;
+      }
+    }
+
+    async function subirCaptureFirebase(codigoTxn) {
+      try {
+        const fileInput = document.getElementById('inputComprobante');
+        if (!fileInput.files[0]) return "Sin comprobante";
+        const file = fileInput.files[0];
+        const ext = file.name.split('.').pop() || 'jpg';
+        const sRef = storageRef(storage, `captures/${codigoTxn}_${Date.now()}.${ext}`);
+        await uploadBytes(sRef, file);
+        return await getDownloadURL(sRef);
+      } catch (error) { return "Error_Subida"; }
+    }
+
+    function mostrarExitoFinal() {
+      setTimeout(() => {
+        document.getElementById('cajaContenedorAnime').style.display = 'none';
+        document.getElementById('pantallaExito').style.display = 'block';
+        isProcessing = false;
+      }, 500);
+    }
+
+    cargarDatosBancarios();
+    cargarCatalogoCliente();
+  </script>
+</body>
+</html>

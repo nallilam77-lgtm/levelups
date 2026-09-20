@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bóveda Level Up - Centro de Operaciones</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff9900;
+      --primary-glow: rgba(255, 153, 0, 0.4);
+      --bg-dark: #0a0510;
+      --bg-panel: #140c1c;
+      --glass-bg: rgba(20, 12, 28, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.05);
+      --text-main: #ffffff;
+      --text-muted: #a0aec0;
+      --success: #00cc66;
+      --danger: #ff3333;
+      --info: #0099ff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #loginScreen {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid var(--glass-border);
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+      text-align: center;
+      z-index: 10;
+    }
+    
+    #loginScreen h2 { font-family: 'Montserrat', sans-serif; color: var(--primary); margin-bottom: 25px; font-size: 26px; text-transform: uppercase; }
+    .input-group { margin-bottom: 20px; text-align: left; }
+    .input-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+    .input-group input, .input-group select {
+      width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 10px;
+      color: #fff; font-size: 15px; outline: none;
+    }
+    .input-group input:focus, .input-group select:focus { border-color: var(--primary); }
+    .btn-action {
+      width: 100%; background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 10px;
+      font-weight: 800; font-size: 16px; text-transform: uppercase; cursor: pointer; transition: 0.2s;
+    }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 5px 20px var(--primary-glow); }
+    #errorMsg { color: var(--danger); font-size: 13px; margin-top: 15px; display: none; font-weight: 600; }
+
+    #modalNuevoDia {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; backdrop-filter: blur(5px);
+    }
+    .modal-nd-content {
+      background: var(--bg-panel); padding: 30px; border-radius: 15px;
+      border: 2px solid var(--danger); text-align: center; max-width: 400px; width: 90%;
+      box-shadow: 0 0 30px rgba(255, 51, 51, 0.4);
+    }
+
+    #dashboardLayout { display: none; width: 100%; height: 100%; display: flex; }
+
+    .sidebar {
+      width: 260px; background: var(--bg-panel); border-right: 1px solid var(--glass-border);
+      display: flex; flex-direction: column; padding: 20px 0;
+    }
+    .sidebar-brand { padding: 0 20px 20px; border-bottom: 1px solid var(--glass-border); margin-bottom: 20px; }
+    .sidebar-brand h2 { font-family: 'Montserrat', sans-serif; color: var(--primary); font-size: 20px; text-transform: uppercase; }
+    
+    .sidebar-menu { list-style: none; flex: 1; overflow-y: auto; }
+    .sidebar-menu li {
+      padding: 15px 25px; font-size: 15px; font-weight: 600; color: var(--text-muted);
+      cursor: pointer; transition: 0.3s; border-left: 3px solid transparent; display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar-menu li:hover { background: rgba(255,255,255,0.03); color: #fff; }
+    .sidebar-menu li.active { background: rgba(255, 153, 0, 0.1); color: var(--primary); border-left-color: var(--primary); }
+    
+    .sidebar-footer { padding: 20px; border-top: 1px solid var(--glass-border); }
+    .btn-logout { width: 100%; background: #331a1a; color: var(--danger); border: 1px solid var(--danger); padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .btn-logout:hover { background: var(--danger); color: white; }
+
+    .main-content {
+      flex: 1; padding: 30px; overflow-y: auto; background: radial-gradient(circle at top, #1a0018, var(--bg-dark) 50%);
+    }
+    
+    .module-section { display: none; animation: fadeIn 0.4s ease; }
+    .module-section.active { display: block; }
+    
+    .section-header { margin-bottom: 25px; }
+    .section-header h1 { font-family: 'Montserrat', sans-serif; font-size: 28px; color: #fff; }
+    .section-header p { color: var(--text-muted); font-size: 14px; }
+
+    .pagos-submenu { display: flex; gap: 12px; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; flex-wrap: wrap; }
+    .tab-btn {
+      background: var(--bg-panel); border: 1px solid var(--glass-border); color: var(--text-muted);
+      padding: 10px 20px; border-radius: 12px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.3s ease;
+    }
+    .tab-btn:hover { background: rgba(255,153,0,0.1); color: #fff; }
+    .tab-btn.active { background: var(--primary); color: #000; font-weight: 800; border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
+    .pagos-subpanel { display: none; animation: fadeIn 0.3s ease; }
+    .pagos-subpanel.active { display: block; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: var(--bg-panel); border: 1px solid var(--glass-border); border-radius: 15px; padding: 20px; }
+    .stat-card h3 { color: var(--text-muted); font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+    .stat-card .value { font-size: 26px; font-weight: 800; color: var(--primary); }
+
+    .form-panel { background: rgba(0,0,0,0.3); border: 1px dashed var(--glass-border); border-radius: 15px; padding: 20px; margin-bottom: 25px; }
+    .form-flex { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
+    .form-flex .input-group { flex: 1; min-width: 140px; margin-bottom: 0; }
+    .form-flex .input-group input, .form-flex .input-group select { padding: 12px; }
+
+    .table-container { background: var(--bg-panel); border-radius: 15px; border: 1px solid var(--glass-border); overflow-x: auto; margin-bottom: 30px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 15px 18px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    th { background: rgba(0,0,0,0.4); color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    td { font-size: 14px; color: #e2e8f0; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .badge-estado { background: rgba(255,153,0,0.2); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+    .badge-estado.completado { background: rgba(0, 204, 102, 0.2); color: var(--success); }
+
+    .acciones-grid { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .btn-icon { padding: 6px 12px; border-radius: 6px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; color: #fff; }
+    .btn-wa { background: #25D366; } .btn-wa:hover { background: #128C7E; }
+    .btn-ok { background: var(--success); } .btn-ok:hover { background: #00994d; }
+    .btn-danger { background: var(--danger); } .btn-danger:hover { background: #cc0000; }
+    .btn-edit { background: var(--info); } .btn-edit:hover { background: #0077cc; }
+    
+    .search-box { width: 100%; padding: 14px; border-radius: 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); color: #fff; font-size: 15px; outline: none; transition: 0.3s; }
+    .search-box:focus { border-color: var(--primary); background: rgba(0,0,0,0.6); }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- PANTALLA DE LOGIN -->
+  <div id="loginScreen">
+    <h2>Bóveda Level Up</h2>
+    <form id="loginForm">
+      <div class="input-group"><label>Usuario Administrador</label><input type="email" id="emailInput" placeholder="Correo electrónico" required></div>
+      <div class="input-group"><label>Contraseña Maestra</label><input type="password" id="passwordInput" placeholder="••••••••" required></div>
+      <button type="submit" class="btn-action">Conectar</button>
+      <p id="errorMsg">Acceso denegado. Verifica tus datos.</p>
+    </form>
+  </div>
+
+  <!-- MODAL DE NUEVO DÍA -->
+  <div id="modalNuevoDia">
+    <div class="modal-nd-content">
+      <h2 style="color:var(--danger); margin-bottom:15px; text-transform:uppercase; font-size:22px;">⚠️ Alerta: Nuevo Día</h2>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Esta acción <strong>ELIMINARÁ DEFINITIVAMENTE</strong> todos los pagos y pedidos actuales para empezar un día en blanco. Ingresa tus credenciales para autorizar.</p>
+      <div class="input-group" style="text-align:left;"><input type="email" id="ndEmail" placeholder="Usuario Administrador" style="margin-bottom:10px; width:100%;"><input type="password" id="ndPass" placeholder="Contraseña Maestra" style="margin-bottom:20px; width:100%;"></div>
+      <p id="ndError" style="color:var(--danger); font-size:13px; display:none; margin-bottom:15px; font-weight:bold;">Credenciales incorrectas o error de red.</p>
+      <div style="display:flex; gap:10px;">
+        <button onclick="cerrarModalNuevoDia()" style="flex:1; padding:12px; border-radius:8px; background:#334155; color:white; border:none; cursor:pointer; font-weight:bold;">Cancelar</button>
+        <button onclick="verificarYBorrarNuevoDia()" id="btnConfirmarND" style="flex:1; padding:12px; border-radius:8px; background:var(--danger); color:white; border:none; cursor:pointer; font-weight:bold;">Autorizar Purga</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESTRUCTURA DEL DASHBOARD -->
+  <div id="dashboardLayout" style="display: none;">
+    
+    <aside class="sidebar">
+      <div class="sidebar-brand"><h2>⚡ Level Up</h2></div>
+      <ul class="sidebar-menu">
+        <li data-target="dashboard" class="active">📊 Resumen</li>
+        <li data-target="pedidos">⚡ Pedidos Live</li>
+        <li data-target="catalogo">🔥 Catálogo (Free Fire)</li>
+        <li data-target="catalogo-roblox">🟥 Catálogo (Roblox)</li>
+        <li data-target="cupones">🏷️ Cupones</li>
+        <li data-target="pagos">🏦 Pagos & MacroDroid</li>
+        <li data-target="inventario">🎟️ Inventario (Pines)</li>
+        <li data-target="configuracion">⚙️ Datos de Pago</li> <!-- NUEVA PESTAÑA -->
+      </ul>
+      <div class="sidebar-footer"><button class="btn-logout" id="btnLogout">Cerrar Sesión</button></div>
+    </aside>
+
+    <main class="main-content">
+      
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="module-section active">
+        <div class="section-header"><h1>Resumen Ejecutivo</h1><p>Vista rápida de tu negocio el día de hoy.</p></div>
+        <div class="stats-grid">
+          <div class="stat-card"><h3>Total Ingresado (Todos los pagos)</h3><div class="value" id="ingresosTotales">0,00 Bs</div></div>
+          <div class="stat-card"><h3>Recargas Completadas (Despachadas)</h3><div class="value" id="ingresosCompletados">0,00 Bs</div></div>
+          <div class="stat-card" style="border: 1px solid var(--success); background: rgba(0, 204, 102, 0.05);">
+            <h3 style="color: var(--success);">Tasa BCV / Paralelo</h3>
+            <input type="number" id="tasaDolar" value="36.60" step="0.01" style="width:100%; padding:8px; border-radius:8px; background:rgba(0,0,0,0.5); color:#fff; border:1px solid var(--success); margin-bottom:8px; font-weight:bold; outline:none;" placeholder="Ej: 36.60">
+            <div style="font-size: 11px; color: var(--text-muted);">Equivalente Completadas:</div>
+            <div class="value" id="ingresosDolares" style="color: var(--success); font-size: 24px;">$0.00</div>
+          </div>
+          <div class="stat-card"><h3>Pedidos Pendientes</h3><div class="value" id="contadorPendientes">0</div></div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN CONFIGURACIÓN PAGO MÓVIL (NUEVA) -->
+      <section id="configuracion" class="module-section">
+        <div class="section-header">
+          <h1>⚙️ Configuración de Pago Móvil</h1>
+          <p>Define los datos bancarios que verán los clientes en la tienda web. Nada está en el HTML, todo carga desde aquí.</p>
+        </div>
+        <div class="form-panel" style="border-color: var(--info); background: rgba(0, 153, 255, 0.05);">
+          <h3 style="margin-bottom: 15px; color: var(--info); font-size: 16px;">Actualizar Datos Bancarios</h3>
+          <form id="formConfigPago" class="form-flex">
+            <div class="input-group">
+              <label>Banco (Ej: Banesco 0134)</label>
+              <input type="text" id="confBanco" placeholder="Ej: Banesco 0134" required>
+            </div>
+            <div class="input-group">
+              <label>Teléfono (Ej: 04141234567)</label>
+              <input type="text" id="confTelefono" placeholder="Ej: 04141234567" required>
+            </div>
+            <div class="input-group">
+              <label>Cédula / RIF (Ej: V-28123456)</label>
+              <input type="text" id="confCedula" placeholder="Ej: V-28123456" required>
+            </div>
+            <button type="submit" id="btnGuardarConfig" class="btn-action" style="width: auto; padding: 12px 25px; font-size: 14px; background: var(--info); color: white;">💾 Guardar y Publicar</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- PEDIDOS LIVE -->
+      <section id="pedidos" class="module-section">
+        <div class="section-header"><h1>Central de Pedidos</h1><p>Monitoreo y despacho en tiempo real.</p></div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Juego / Ref</th><th>Datos Jugador</th><th>Estado</th><th>Acciones Rápidas</th></tr></thead>
+            <tbody id="tablaCuerpo"><tr><td colspan="4" style="text-align: center;">Cargando base de datos...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CATÁLOGO (FREE FIRE) -->
+      <section id="catalogo" class="module-section">
+        <div class="section-header"><h1>Gestión de Catálogo (Free Fire)</h1><p>Agrega, modifica o elimina los paquetes de diamantes visibles en la tienda web.</p></div>
+        <div class="form-panel">
+          <h3 id="formTituloCat" style="margin-bottom: 15px; color: var(--primary); font-size: 16px;">Agregar Nuevo Paquete</h3>
+          <form id="formCatalogo" class="form-flex">
+            <input type="hidden" id="editDocIdCat">
+            <div class="input-group"><label>Diamantes (Ej: 110)</label><input type="number" id="inputDiamantes" placeholder="110" required></div>
+            <div class="input-group"><label>Precio en Bs (Ej: 760)</label><input type="text" id="inputPrecio" placeholder="760" required></div>
+            <button type="submit" id="btnFormSubmitCat" class="btn-action" style="width: auto; padding: 12px 25px; font-size: 14px;">+ Añadir Paquete</button>
+            <button type="button" id="btnCancelarEditCat" class="btn-action btn-danger" style="display:none; width: auto; padding: 12px 25px; font-size: 14px;" onclick="cancelarEdicionCat()">Cancelar</button>
+          </form>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Paquete (Diamantes)</th><th>Precio en Bolívares</th><th>Acción</th></tr></thead>
+            <tbody id="tablaCatalogo"><tr><td colspan="3" style="text-align: center;">Cargando catálogo...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CATÁLOGO ROBLOX -->
+      <section id="catalogo-roblox" class="module-section">
+        <div class="section-header">
+          <h1>Gestión de Catálogo (Roblox)</h1>
+        </div>
+        <div class="form-panel" style="border-color: #ff3333; background: rgba(255, 51, 51, 0.03);">
+          <h3 style="margin-bottom: 15px; color: #ff3333; font-size: 16px;">➕ Añadir Nuevo Paquete de Roblox</h3>
+          <form id="formNuevoRoblox" class="form-flex">
+            <div class="input-group">
+              <label>Robux (Ej: 500)</label>
+              <input type="number" id="inputRobuxNuevo" placeholder="500" required>
+            </div>
+            <div class="input-group">
+              <label>Precio en Bs (Ej: 5000)</label>
+              <input type="text" id="inputPrecioRobloxNuevo" placeholder="5000" required>
+            </div>
+            <button type="submit" class="btn-action" style="width: auto; padding: 12px 25px; font-size: 14px; background: #ff3333; color: white;">+ Añadir Paquete</button>
+          </form>
+        </div>
+        <div class="form-panel" id="panelEdicionRoblox" style="display: none; border-color: #ff3333; background: rgba(255, 51, 51, 0.05);">
+          <h3 style="margin-bottom: 15px; color: #ff3333; font-size: 16px;">✏️ Editando Precio de Robux</h3>
+          <form id="formCatalogoRoblox" class="form-flex">
+            <input type="hidden" id="editDocIdRoblox">
+            <div class="input-group">
+              <label>Paquete</label>
+              <input type="text" id="inputProductoRoblox" readonly style="background: rgba(255,255,255,0.05); color: #666; cursor: not-allowed; border-color: rgba(255,255,255,0.1);">
+            </div>
+            <div class="input-group">
+              <label>Nuevo Precio en Bs</label>
+              <input type="text" id="inputPrecioRoblox" placeholder="Ingresa el precio" required>
+            </div>
+            <button type="submit" class="btn-action" style="width: auto; padding: 12px 25px; font-size: 14px; background: #ff3333; color: white;">💾 Actualizar Precio</button>
+            <button type="button" class="btn-action btn-danger" style="width: auto; padding: 12px 25px; font-size: 14px; background: #331a1a;" onclick="cancelarEdicionRoblox()">Cancelar</button>
+          </form>
+        </div>
+        <button id="btnInitRoblox" class="btn-action btn-ok" style="display:none; width:100%; margin-bottom:20px;" onclick="inicializarCatalogoRoblox()">⚠️ Base de datos vacía. Haz clic aquí para generar el catálogo de Roblox automáticamente.</button>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Paquete Fijo (Robux)</th><th>Precio en Bolívares</th><th>Configuración</th></tr></thead>
+            <tbody id="tablaCatalogoRoblox"><tr><td colspan="3" style="text-align: center;">Cargando catálogo Roblox...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CUPONES -->
+      <section id="cupones" class="module-section">
+        <div class="section-header"><h1>🏷️ Códigos de Descuento Avanzados</h1></div>
+        <div class="form-panel">
+          <h3 id="formTituloCup" style="margin-bottom: 15px; color: var(--primary); font-size: 16px;">Crear Nuevo Cupón</h3>
+          <form id="formCupones" class="form-flex">
+            <input type="hidden" id="editDocIdCup"><input type="hidden" id="usosActualesCup" value="0">
+            <div class="input-group"><label>Código (Ej: LEVELUP1)</label><input type="text" id="inputCodigoCup" placeholder="LEVELUP1" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();" required></div>
+            <div class="input-group"><label>Descuento (%) (Ej: 0.5 o 5)</label><input type="number" id="inputPorcentajeCup" placeholder="0.5" step="0.1" min="0.1" max="100" required></div>
+            <div class="input-group"><label>Límite de Usos (Ej: 50)</label><input type="number" id="inputLimiteCup" placeholder="50" min="1" required></div>
+            <button type="submit" id="btnFormSubmitCup" class="btn-action" style="width: auto; padding: 12px 25px; font-size: 14px;">+ Crear Cupón</button>
+            <button type="button" id="btnCancelarEditCup" class="btn-action btn-danger" style="display:none; width: auto; padding: 12px 25px; font-size: 14px;" onclick="cancelarEdicionCup()">Cancelar</button>
+          </form>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Código</th><th>Descuento</th><th>Usos / Límite</th><th>Acción</th></tr></thead>
+            <tbody id="tablaCupones"><tr><td colspan="4" style="text-align: center;">Cargando cupones...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PAGOS & MACRODROID -->
+      <section id="pagos" class="module-section">
+        <div class="section-header"><h1>🏦 Validación de Pagos (MacroDroid)</h1></div>
+        <div id="alertaAnomalias" style="display:none; background: rgba(255,51,51,0.15); border: 1px solid var(--danger); padding: 15px; border-radius: 12px; margin-bottom: 20px; color: #ff9999; font-weight: bold; box-shadow: 0 0 15px rgba(255,51,51,0.2);">
+          ⚠️ <span id="textoAlertaAnomalia">¡Atención! Se han detectado pagos deficientes, montos menores o referencias duplicadas que requieren revisión.</span>
+        </div>
+        <div class="pagos-submenu">
+          <button class="tab-btn active" onclick="cambiarSubTab('tabCompletados', this)">✅ Pagos Completados</button>
+          <button class="tab-btn" onclick="cambiarSubTab('tabNoUsados', this)">⚠️ Pagos No Usados (Bandeja)</button>
+          <button class="tab-btn" onclick="cambiarSubTab('tabPagaronMenos', this)">🔄 Pagos Dobles / Ajustados</button>
+        </div>
+        <div id="tabCompletados" class="pagos-subpanel active">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:20px;">
+            <input type="text" id="inputBusquedaCompletados" class="search-box" style="margin-bottom:0; flex:1;" placeholder="🔍 Buscar pago completado por ID o Referencia...">
+            <button class="btn-action btn-danger" style="width:auto; padding: 13px 20px; font-size:13px;" onclick="abrirModalNuevoDia()">🌅 Nuevo Día</button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>ID / Referencia</th><th>Monto Usado (Pagado)</th><th>Recarga (Esperado)</th><th>Jugador / Datos Extra</th></tr></thead>
+              <tbody id="tablaCompletadosDia"><tr><td colspan="4" style="text-align: center; color:var(--text-muted);">Cargando pagos completados...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="tabNoUsados" class="pagos-subpanel">
+          <div style="display:flex; justify-content:flex-end; margin-bottom:20px;"><button class="btn-action btn-danger" style="width:auto; padding: 13px 20px; font-size:13px;" onclick="abrirModalNuevoDia()">🌅 Nuevo Día</button></div>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>Teléfono / Origen</th><th>Referencia</th><th>Monto</th><th>Fecha / Hora</th><th>Acción Backup</th></tr></thead>
+              <tbody id="tablaPagosNoUsados"><tr><td colspan="5" style="text-align: center; color:var(--text-muted);">Cargando pagos entrantes...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="tabPagaronMenos" class="pagos-subpanel">
+          <div style="display:flex; justify-content:flex-end; margin-bottom:20px;"><button class="btn-action btn-danger" style="width:auto; padding: 13px 20px; font-size:13px;" onclick="abrirModalNuevoDia()">🌅 Nuevo Día</button></div>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>Pedido / Jugador</th><th>Referencias Usadas</th><th>Monto Esperado vs Pagado</th><th>Acciones de Resolución</th></tr></thead>
+              <tbody id="tablaPagaronMenos"><tr><td colspan="4" style="text-align: center; color:var(--text-muted);">Todo en orden. No hay pagos deficientes o dobles.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- INVENTARIO -->
+      <section id="inventario" class="module-section">
+        <div class="section-header"><h1>Inventario de Pines (Roblox)</h1></div>
+        <div class="form-panel">
+          <h3 style="margin-bottom: 15px; color: #ff3333; font-size: 16px;">🟥 Añadir Nuevo PIN de Roblox</h3>
+          <form id="formInventario" class="form-flex">
+            <div class="input-group">
+              <label>Selecciona el Producto</label>
+              <select id="invProducto" required><option value="">Cargando paquetes de Roblox...</option></select>
+            </div>
+            <div class="input-group" style="flex: 2;">
+              <label>Código / PIN a entregar</label>
+              <input type="text" id="invCodigo" placeholder="Ej: XXXX-YYYY-ZZZZ" required>
+            </div>
+            <button type="submit" id="btnGuardarInventario" class="btn-action" style="width: auto; padding: 12px 25px; font-size: 14px; background: #ff3333; color: white;">+ Añadir PIN</button>
+          </form>
+        </div>
+        <div style="margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
+          <div class="input-group" style="margin-bottom: 0;">
+            <label style="color: var(--primary);">Filtrar Stock por Producto Específico</label>
+            <select id="filtroInventarioProducto" onchange="renderTablaInventario()">
+              <option value="">📂 Mostrar todos los productos</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Producto (Robux)</th><th>Código / PIN</th><th>Estado</th><th>Acción</th></tr></thead>
+            <tbody id="tablaInventario"><tr><td colspan="4" style="text-align: center;">Cargando inventario...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module">
+    // SE AGREGA setDoc A LAS IMPORTACIONES
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, doc, updateDoc, addDoc, deleteDoc, getDocs, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBIdEh_HzzB8dnzG8qkPQYOIo2kSb_F6xQ",
+      authDomain: "levelupstore-87d4d.firebaseapp.com",
+      projectId: "levelupstore-87d4d",
+      storageBucket: "levelupstore-87d4d.firebasestorage.app",
+      messagingSenderId: "948536026825",
+      appId: "1:948536026825:web:80520e4be7514a134d8f18",
+      measurementId: "G-3F8E5RCFS6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboardLayout = document.getElementById('dashboardLayout');
+    const tablaCuerpo = document.getElementById('tablaCuerpo');
+    const contadorPendientes = document.getElementById('contadorPendientes');
+    
+    const tablaCatalogo = document.getElementById('tablaCatalogo');
+    const formCatalogo = document.getElementById('formCatalogo');
+    
+    const tablaCatalogoRoblox = document.getElementById('tablaCatalogoRoblox');
+    const formCatalogoRoblox = document.getElementById('formCatalogoRoblox');
+    const formNuevoRoblox = document.getElementById('formNuevoRoblox');
+
+    const tablaCupones = document.getElementById('tablaCupones');
+    const formCupones = document.getElementById('formCupones');
+    const tablaCompletadosDia = document.getElementById('tablaCompletadosDia');
+    const tablaPagosNoUsados = document.getElementById('tablaPagosNoUsados');
+    const tablaPagaronMenos = document.getElementById('tablaPagaronMenos');
+
+    let unsubscribePedidos = null;
+    let unsubscribeCatalogo = null;
+    let unsubscribeCatalogoRoblox = null;
+    let unsubscribeCupones = null;
+    let unsubscribeInventario = null;
+    let unsubscribeConfig = null;
+
+    window.bsCompletadosGlobal = 0;
+    window.catalogoRobloxList = [];
+    window.inventarioGlobal = [];
+    
+    window.formatearMontoVES = function(montoStr) {
+        if (montoStr === undefined || montoStr === null) return 0;
+        if (typeof montoStr === 'number') return montoStr;
+        let m = String(montoStr).trim().replace(/[^0-9.,-]/g, '');
+        if (!m) return 0;
+        let lastDot = m.lastIndexOf('.'); let lastComma = m.lastIndexOf(','); let lastSeparatorIndex = Math.max(lastDot, lastComma);
+        if (lastSeparatorIndex === -1) { return parseFloat(m) || 0; }
+        let parteEntera = m.substring(0, lastSeparatorIndex).replace(/[^0-9-]/g, ''); let parteDecimal = m.substring(lastSeparatorIndex + 1).replace(/[^0-9]/g, '');
+        if (parteDecimal.length >= 3) { parteEntera = parteEntera + parteDecimal; parteDecimal = "00"; }
+        return parseFloat(parteEntera + "." + parteDecimal) || 0;
+    };
+
+    const menuItems = document.querySelectorAll('.sidebar-menu li');
+    const sections = document.querySelectorAll('.module-section');
+
+    menuItems.forEach(item => {
+      item.addEventListener('click', () => {
+        menuItems.forEach(m => m.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        item.classList.add('active');
+        document.getElementById(item.getAttribute('data-target')).classList.add('active');
+      });
+    });
+
+    window.cambiarSubTab = function(tabId, btnElement) {
+      document.querySelectorAll('.pagos-subpanel').forEach(panel => panel.classList.remove('active'));
+      document.querySelectorAll('.pagos-submenu .tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btnElement.classList.add('active');
+    }
+
+    window.calcularDolares = function(bolivares) {
+       let tasa = parseFloat(document.getElementById('tasaDolar').value) || 1;
+       let dolares = bolivares / tasa;
+       document.getElementById('ingresosDolares').innerText = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'}).format(dolares);
+    }
+    document.getElementById('tasaDolar').addEventListener('input', () => { calcularDolares(window.bsCompletadosGlobal); });
+
+    window.abrirModalNuevoDia = function() {
+        document.getElementById('modalNuevoDia').style.display = 'flex';
+        document.getElementById('ndEmail').value = ''; document.getElementById('ndPass').value = ''; document.getElementById('ndError').style.display = 'none';
+    }
+    window.cerrarModalNuevoDia = function() { document.getElementById('modalNuevoDia').style.display = 'none'; }
+
+    window.verificarYBorrarNuevoDia = async function() {
+        const em = document.getElementById('ndEmail').value.trim(); const pw = document.getElementById('ndPass').value;
+        const btn = document.getElementById('btnConfirmarND'); const err = document.getElementById('ndError');
+        if (!em || !pw) { err.innerText = "Por favor, completa ambos campos."; err.style.display = 'block'; return; }
+        btn.disabled = true; btn.innerText = 'Verificando...'; err.style.display = 'none';
+        try {
+            await signInWithEmailAndPassword(auth, em, pw);
+            btn.innerText = 'Eliminando Base de Datos...';
+            const pSnap = await getDocs(collection(db, "pagos")); pSnap.forEach(d => deleteDoc(doc(db, "pagos", d.id)));
+            const pedSnap = await getDocs(collection(db, "pedidos")); pedSnap.forEach(d => deleteDoc(doc(db, "pedidos", d.id)));
+            alert("✅ ¡Éxito! Todos los datos han sido eliminados. Listo para un nuevo día."); cerrarModalNuevoDia();
+        } catch (error) { err.innerText = "Credenciales incorrectas o error de conexión."; err.style.display = 'block'; } finally { btn.disabled = false; btn.innerText = 'Autorizar Purga'; }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try { 
+        document.getElementById('errorMsg').style.display = 'none'; 
+        await signInWithEmailAndPassword(auth, document.getElementById('emailInput').value.trim(), document.getElementById('passwordInput').value); 
+      } catch (error) { document.getElementById('errorMsg').style.display = 'block'; }
+    });
+
+    document.getElementById('btnLogout').addEventListener('click', () => signOut(auth));
+
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.email === "nallilam77@gmail.com") {
+        loginScreen.style.display = 'none'; dashboardLayout.style.display = 'flex';
+        cargarPedidosEnTiempoReal();
+        cargarCatalogoAdmin();
+        cargarCatalogoRobloxAdmin();
+        cargarCuponesAdmin();
+        cargarModuloPagosMacroDroid();
+        cargarInventarioAdmin();
+        cargarConfiguracionPago(); // INICIA CARGA DE CONFIGURACIÓN
+      } else {
+        loginScreen.style.display = 'block'; dashboardLayout.style.display = 'none';
+      }
+    });
+
+    // ==========================================
+    // CONFIGURACIÓN DATOS BANCARIOS (NUEVO)
+    // ==========================================
+    function cargarConfiguracionPago() {
+      unsubscribeConfig = onSnapshot(doc(db, "configuracion", "pago_movil"), (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById('confBanco').value = data.banco || '';
+          document.getElementById('confTelefono').value = data.telefono || '';
+          document.getElementById('confCedula').value = data.cedula || '';
+        }
+      });
+    }
+
+    document.getElementById('formConfigPago').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const banco = document.getElementById('confBanco').value.trim();
+      const telefono = document.getElementById('confTelefono').value.trim();
+      const cedula = document.getElementById('confCedula').value.trim();
+      
+      const btn = document.getElementById('btnGuardarConfig');
+      btn.innerText = "Guardando...";
+      btn.disabled = true;
+
+      try {
+        await setDoc(doc(db, "configuracion", "pago_movil"), { banco, telefono, cedula });
+        alert("✅ Datos bancarios guardados. La tienda web de clientes se ha actualizado al instante.");
+      } catch (error) {
+        alert("Error al guardar configuración: " + error.message);
+      }
+      
+      btn.innerText = "💾 Guardar y Publicar";
+      btn.disabled = false;
+    });
+
+    // ==========================================
+    // RESTO DE FUNCIONES (PEDIDOS, CATALOGO, INVENTARIO)
+    // ==========================================
+    function cargarPedidosEnTiempoReal() {
+      const pedidosRef = collection(db, "pedidos");
+      unsubscribePedidos = onSnapshot(pedidosRef, (snapshot) => {
+        tablaCuerpo.innerHTML = ''; let pendientes = 0;
+        if (snapshot.empty) { tablaCuerpo.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px;">Todo al día. No hay pedidos.</td></tr>'; contadorPendientes.innerText = "0"; return; }
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data(); const estado = data.estado || 'Pendiente';
+          const claseBadge = estado.toLowerCase() === 'completado' ? 'badge-estado completado' : 'badge-estado';
+          if(estado.toLowerCase() !== 'completado') pendientes++;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong style="color:var(--primary)">${data.juego_o_producto || 'Desconocido'}</strong><br><small style="color:var(--text-muted)">Ref: ${data.referencia || '-'}</small></td>
+            <td>ID: ${data.id_jugador || '-'}<br><small>Tel: ${data.telefono || '-'}</small></td>
+            <td><span class="${claseBadge}">${estado}</span></td>
+            <td>
+              <div class="acciones-grid">
+                <button class="btn-icon btn-wa" data-tel="${data.telefono || ''}" data-juego="${data.juego_o_producto || ''}">WA</button>
+                <button class="btn-icon btn-ok" data-id="${docSnap.id}">✔ Listo</button>
+              </div>
+            </td>
+          `;
+          tablaCuerpo.appendChild(tr);
+        });
+        contadorPendientes.innerText = pendientes;
+      });
+    }
+
+    function cargarCuponesAdmin() {
+      const cuponesRef = collection(db, "cupones");
+      unsubscribeCupones = onSnapshot(cuponesRef, (snapshot) => {
+        tablaCupones.innerHTML = '';
+        if (snapshot.empty) { tablaCupones.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay cupones creados.</td></tr>'; return; }
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data(); const usosActuales = data.usosActuales || 0; const limiteUsos = data.limiteUsos || 0; const agotado = usosActuales >= limiteUsos;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td><strong style="color:var(--primary)">${data.codigo}</strong> ${agotado ? '<br><span style="color:var(--danger); font-size:11px;">⚠️ Agotado</span>' : ''}</td><td>${data.porcentaje}%</td><td><span style="color: #00ffcc; font-weight: bold;">${usosActuales}</span> / ${limiteUsos} usos</td>
+            <td><div class="acciones-grid"><button class="btn-icon btn-edit btn-editar-cupon" data-id="${docSnap.id}" data-codigo="${data.codigo}" data-porcentaje="${data.porcentaje}" data-limite="${limiteUsos}" data-usos="${usosActuales}">✏️ Editar</button><button class="btn-icon btn-danger btn-eliminar-cupon" data-id="${docSnap.id}">🗑️ Eliminar</button></div></td>`;
+          tablaCupones.appendChild(tr);
+        });
+      });
+    }
+
+    formCupones.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const docId = document.getElementById('editDocIdCup').value; 
+      const codigo = document.getElementById('inputCodigoCup').value.trim().toUpperCase(); 
+      const porcentaje = parseFloat(document.getElementById('inputPorcentajeCup').value.trim()); 
+      const limiteUsos = parseInt(document.getElementById('inputLimiteCup').value.trim()); 
+      try {
+        if (docId) { await updateDoc(doc(db, "cupones", docId), { codigo, porcentaje, limiteUsos }); window.cancelarEdicionCup(); } 
+        else { await addDoc(collection(db, "cupones"), { codigo, porcentaje, limiteUsos, usosActuales: 0 }); }
+        document.getElementById('inputCodigoCup').value = ''; document.getElementById('inputPorcentajeCup').value = ''; document.getElementById('inputLimiteCup').value = ''; document.getElementById('usosActualesCup').value = '0';
+      } catch (error) { alert("Error al guardar cupón: " + error.message); }
+    });
+
+    window.cancelarEdicionCup = function() {
+      document.getElementById('editDocIdCup').value = ''; document.getElementById('inputCodigoCup').value = ''; document.getElementById('inputPorcentajeCup').value = ''; document.getElementById('inputLimiteCup').value = ''; document.getElementById('usosActualesCup').value = '0';
+      document.getElementById('formTituloCup').innerText = "Crear Nuevo Cupón"; document.getElementById('btnFormSubmitCup').innerText = "+ Crear Cupón"; document.getElementById('btnCancelarEditCup').style.display = 'none';
+    }
+
+    window.renderTablaCompletados = function(data) {
+      tablaCompletadosDia.innerHTML = '';
+      if(data.length === 0) { tablaCompletadosDia.innerHTML = '<tr><td colspan="4" style="text-align: center; color:var(--text-muted);">No hay pagos despachados como completados hoy.</td></tr>'; return; }
+      data.forEach(p => {
+         let horaFmt = "N/A";
+         if (p.timestamp) { let fObj = p.timestamp?.toDate ? p.timestamp.toDate() : (typeof p.timestamp === 'string' || typeof p.timestamp === 'number' ? new Date(p.timestamp) : null); if (fObj && !isNaN(fObj.getTime())) { horaFmt = fObj.toLocaleString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true }); } }
+         let paquete = p.pedidoAsociado ? p.pedidoAsociado.juego_o_producto : '<span style="color:var(--text-muted)">Sin asociar / Venta Directa</span>';
+         let montoEsperado = p.pedidoAsociado ? p.pedidoAsociado.montoEsperado : '0 Bs';
+         let jugador = p.pedidoAsociado ? p.pedidoAsociado.id_jugador : 'Desconocido';
+         let cupon = (p.pedidoAsociado && p.pedidoAsociado.cupon && p.pedidoAsociado.cupon !== "Ninguno") ? `<br><span style="color:#ffdd00; font-size:11px; font-weight:bold;">🏷️ Cupón: ${p.pedidoAsociado.cupon}</span>` : '';
+         let conteoRef = 0;
+         if (window.pedidosGlobalList) {
+             let refLimpiaActual = String(p.referencia || "").replace(/\D/g, '').slice(-5);
+             window.pedidosGlobalList.forEach(ped => {
+                 let pedRefLimpia = String(ped.referencia || "").replace(/\D/g, '').slice(-5);
+                 if (pedRefLimpia === refLimpiaActual && refLimpiaActual.length >= 5) { conteoRef++; }
+             });
+         }
+         let alertaDuplicadoAdmin = conteoRef > 1 ? `<br><span style="color:var(--danger); font-size:10px; font-weight:bold; background:rgba(255,51,51,0.15); padding:3px 8px; border-radius:4px; border:1px solid var(--danger); display:inline-block; margin-top:6px;">⚠️ ADVERTENCIA: SE HICIERON ${conteoRef} RECARGAS CON ESTA MISMA REFERENCIA EN PARALELO</span>` : "";
+         
+         let numPago = window.formatearMontoVES(p.monto);
+         let numEsperado = window.formatearMontoVES(montoEsperado);
+         let alertaMonto = (p.pedidoAsociado && numPago >= (numEsperado - 0.1)) ? `<br><span style="color:var(--success); font-size: 10px; font-weight: bold; background: rgba(0,204,102,0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--success); display: inline-block; margin-top: 5px;">✔️ Cubre recarga</span>` : `<br><span style="color:var(--danger); font-size: 10px; font-weight: bold; background: rgba(255,51,51,0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--danger); display: inline-block; margin-top: 5px;">⚠️ Monto Menor / Deficiente</span>`;
+
+         const tr = document.createElement('tr');
+         tr.innerHTML = `
+           <td><code style="color:var(--info); font-size:11px;">ID: ${p.id}</code><br><span style="color:#00ffcc; font-weight:bold; font-size:15px; letter-spacing: 1px;">REF: ${p.referencia}</span>${alertaDuplicadoAdmin}</td>
+           <td><strong style="color:var(--primary); font-size:16px;">${p.monto} Bs</strong>${alertaMonto}</td>
+           <td><strong style="color:#fff;">${paquete}</strong><br><small style="color:var(--text-muted);">Esperado: ${montoEsperado}</small></td>
+           <td><small style="color:#e2e8f0;">👤 ${jugador}</small> ${cupon}<br><small style="color:var(--text-muted);">📱 ${p.telefono} | 🕒 ${horaFmt}</small></td>
+         `;
+         tablaCompletadosDia.appendChild(tr);
+      });
+    }
+
+    document.getElementById('inputBusquedaCompletados').addEventListener('input', (e) => {
+       const term = e.target.value.toLowerCase().trim(); if(!window.pagosCompletadosGlobal) return;
+       const filtrados = window.pagosCompletadosGlobal.filter(p => (p.id && p.id.toLowerCase().includes(term)) || (p.referencia && p.referencia.toLowerCase().includes(term)) || (p.pedidoAsociado && p.pedidoAsociado.id_jugador && p.pedidoAsociado.id_jugador.toLowerCase().includes(term)));
+       window.renderTablaCompletados(filtrados);
+    });
+
+    function cargarModuloPagosMacroDroid() {
+      const pedidosRef = collection(db, "pedidos"); const pagosRef = collection(db, "pagos");
+      onSnapshot(pedidosRef, (snapshotPedidos) => {
+        let pedidosList = []; snapshotPedidos.forEach(doc => pedidosList.push({ id: doc.id, ...doc.data() }));
+        window.pedidosGlobalList = pedidosList;
+        onSnapshot(pagosRef, (snapshotPagos) => {
+          let pagosList = []; let sumaTotalBandeja = 0; 
+          snapshotPagos.forEach(doc => {
+            const data = doc.data();
+            let montoLimpio = window.formatearMontoVES(data.monto || data.amount || data.valor || '0');
+            sumaTotalBandeja += montoLimpio;
+            pagosList.push({ id: doc.id, monto: data.monto || data.amount || data.valor || '0', montoNumerico: montoLimpio, referencia: data.referencia || data.ref || data.reference || '-', telefono: data.telefono || data.phone || data.origen || 'Pago Móvil', timestamp: data.timestamp || data.fecha || null, estado: data.estado ? data.estado.toLowerCase() : 'pendiente' });
+          });
+
+          let pagosCompletados = pagosList.filter(p => p.estado === 'completado').map(p => {
+              let refLimpia = String(p.referencia).replace(/\D/g, '').slice(-5);
+              let pedidoAsociado = pedidosList.find(ped => String(ped.referencia || "").replace(/\s/g, '').includes(refLimpia));
+              return { ...p, pedidoAsociado };
+          });
+          window.pagosCompletadosGlobal = pagosCompletados; 
+          let ingresosCompletados = pagosCompletados.reduce((acc, curr) => acc + curr.montoNumerico, 0);
+          window.bsCompletadosGlobal = ingresosCompletados; 
+
+          document.getElementById('ingresosTotales').innerText = new Intl.NumberFormat('es-VE', {minimumFractionDigits: 2}).format(sumaTotalBandeja) + " Bs";
+          document.getElementById('ingresosCompletados').innerText = new Intl.NumberFormat('es-VE', {minimumFractionDigits: 2}).format(ingresosCompletados) + " Bs";
+          window.calcularDolares(ingresosCompletados); 
+
+          const inputBusqueda = document.getElementById('inputBusquedaCompletados').value.toLowerCase().trim();
+          if (inputBusqueda) { window.renderTablaCompletados(pagosCompletados.filter(p => (p.id && p.id.toLowerCase().includes(inputBusqueda)) || (p.referencia && p.referencia.toLowerCase().includes(inputBusqueda)))); } 
+          else { window.renderTablaCompletados(pagosCompletados); }
+
+          let pagosPendientes = pagosList.filter(p => p.estado !== 'completado' && p.estado !== 'asociado' && !p.estado.startsWith('procesando_'));
+          let hayAnomalias = pagosPendientes.some(p => p.montoNumerico <= 0) || pagosCompletados.some(p => {
+             if(!p.pedidoAsociado) return false;
+             let mPag = p.montoNumerico; let mEsp = window.formatearMontoVES(p.pedidoAsociado.montoEsperado); return mPag < (mEsp - 0.1);
+          });
+          
+          const bannerAlerta = document.getElementById('alertaAnomalias');
+          if (bannerAlerta) { bannerAlerta.style.display = hayAnomalias ? 'block' : 'none'; }
+
+          tablaPagosNoUsados.innerHTML = '';
+          if (pagosPendientes.length > 0) {
+            pagosPendientes.forEach(p => {
+              let fechaFmt = "N/A";
+              if (p.timestamp) { let fObj = p.timestamp?.toDate ? p.timestamp.toDate() : (typeof p.timestamp === 'string' || typeof p.timestamp === 'number' ? new Date(p.timestamp) : null); if (fObj && !isNaN(fObj.getTime())) { fechaFmt = fObj.toLocaleString('es-VE', { timeZone: 'America/Caracas' }); } }
+              let alertaMontoBandeja = p.montoNumerico <= 0 ? `<br><span style="color:var(--danger); font-size:10px; font-weight:bold;">⚠️ Monto extraño / cero</span>` : '';
+              const tr = document.createElement('tr');
+              tr.innerHTML = `<td>${p.telefono}</td><td><span style="color:var(--primary); font-weight:bold;">${p.referencia}</span></td><td>${p.monto} Bs ${alertaMontoBandeja}</td><td><small>${fechaFmt}</small></td><td><button class="btn-icon btn-ok vincular-pago-btn" data-id="${p.id}" style="font-size:10px;">✔ Marcar Completado</button></td>`;
+              tablaPagosNoUsados.appendChild(tr);
+            });
+          } else { tablaPagosNoUsados.innerHTML = '<tr><td colspan="5" style="text-align: center; color:var(--text-muted);">La bandeja está limpia. No hay pagos pendientes.</td></tr>'; }
+
+          tablaPagaronMenos.innerHTML = '';
+          let pedidosAjustados = pedidosList.filter(ped => {
+             const mPagado = window.formatearMontoVES(ped.montoPagado); const mEsperado = window.formatearMontoVES(ped.montoEsperado);
+             return (ped.referencia && ped.referencia.includes('+')) || (ped.estado && ped.estado.toLowerCase() === 'ajustado') || ((mPagado > 0) && (mPagado < (mEsperado - 0.1)));
+          });
+
+          if (pedidosAjustados.length > 0) {
+            pedidosAjustados.forEach(ped => {
+              let mPagado = window.formatearMontoVES(ped.montoPagado); let mEsperado = window.formatearMontoVES(ped.montoEsperado);
+              let alerta = mPagado >= mEsperado - 0.1 ? `<span style="color:var(--success); font-size:11px; font-weight:bold; padding:3px 6px; border:1px solid var(--success); border-radius:4px; display:inline-block; margin-top:5px;">✔️ Cubierto Correctamente</span>` : `<span style="color:var(--danger); font-size:11px; font-weight:bold; padding:3px 6px; border:1px solid var(--danger); border-radius:4px; background:rgba(255,51,51,0.1); display:inline-block; margin-top:5px;">⚠️ Monto menor / incompleto</span>`;
+              const tr = document.createElement('tr');
+              tr.innerHTML = `<td><strong>${ped.juego_o_producto}</strong><br><small style="color:var(--text-muted)">👤 ${ped.id_jugador}</small></td><td><span style="color:#00ffcc; font-weight:bold; font-size:15px; letter-spacing:1px;">${ped.referencia}</span></td><td><span style="color:var(--text-muted); font-size:12px;">Esperado: ${ped.montoEsperado}</span><br><strong style="color:var(--primary); font-size:16px;">Pagado: ${ped.montoPagado}</strong><br>${alerta}</td><td><div class="acciones-grid"><button class="btn-icon btn-edit elegir-paquete-compat" data-id="${ped.id}" data-pagado="${ped.montoPagado}">📦 Re-Ajustar Paquete</button><button class="btn-icon btn-ok" data-id="${ped.id}">✔ Marcar Listo</button></div></td>`;
+              tablaPagaronMenos.appendChild(tr);
+            });
+          } else { tablaPagaronMenos.innerHTML = '<tr><td colspan="4" style="text-align: center; color:var(--text-muted);">Todo en orden. No hay pagos deficientes o dobles.</td></tr>'; }
+        });
+      });
+    }
+
+    function cargarCatalogoAdmin() {
+      const catRef = collection(db, "catalogo_freefire");
+      unsubscribeCatalogo = onSnapshot(catRef, (snapshot) => {
+        tablaCatalogo.innerHTML = '';
+        if (snapshot.empty) { tablaCatalogo.innerHTML = '<tr><td colspan="3" style="text-align: center;">No hay paquetes en el catálogo.</td></tr>'; return; }
+        let paquetes = []; snapshot.forEach((docSnap) => { paquetes.push({ id: docSnap.id, ...docSnap.data() }); });
+        paquetes.sort((a, b) => parseInt(a.diamantes) - parseInt(b.diamantes));
+        paquetes.forEach((data) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td><strong style="color:var(--primary)">${data.diamantes} 💎</strong></td><td>${data.precio} Bs</td><td><div class="acciones-grid"><button class="btn-icon btn-edit btn-editar-paquete" data-id="${data.id}" data-diamantes="${data.diamantes}" data-precio="${data.precio}">✏️ Editar</button><button class="btn-icon btn-danger btn-eliminar-paquete" data-id="${data.id}">🗑️ Eliminar</button></div></td>`;
+          tablaCatalogo.appendChild(tr);
+        });
+      });
+    }
+
+    formCatalogo.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const docId = document.getElementById('editDocIdCat').value.trim(); const diamantes = document.getElementById('inputDiamantes').value.trim(); const precio = document.getElementById('inputPrecio').value.trim();
+      try {
+        if (docId !== "") { await updateDoc(doc(db, "catalogo_freefire", docId), { diamantes, precio }); window.cancelarEdicionCat(); } else { await addDoc(collection(db, "catalogo_freefire"), { diamantes, precio, spanFull: false }); }
+        document.getElementById('inputDiamantes').value = ''; document.getElementById('inputPrecio').value = ''; document.getElementById('editDocIdCat').value = '';
+      } catch (error) { alert("Error al guardar paquete: " + error.message); }
+    });
+
+    window.cancelarEdicionCat = function() {
+      document.getElementById('editDocIdCat').value = ''; document.getElementById('inputDiamantes').value = ''; document.getElementById('inputPrecio').value = '';
+      document.getElementById('formTituloCat').innerText = "Agregar Nuevo Paquete"; document.getElementById('btnFormSubmitCat').innerText = "+ Añadir Paquete"; document.getElementById('btnCancelarEditCat').style.display = 'none';
+    }
+
+    window.inicializarCatalogoRoblox = async function() {
+       const btn = document.getElementById('btnInitRoblox'); btn.disabled = true; btn.innerText = "Generando paquetes...";
+       const paquetesBase = [ { producto: "50", precio: "928" }, { producto: "100", precio: "1.693" }, { producto: "275", precio: "2.900" }, { producto: "365", precio: "3.937" }, { producto: "420", precio: "4.605" }, { producto: "700", precio: "7.571" }, { producto: "1000", precio: "9.923" } ];
+       try { for (let p of paquetesBase) { await addDoc(collection(db, "catalogo_roblox"), p); } alert("✅ Catálogo base de Roblox generado exitosamente."); btn.style.display = "none"; } catch (e) { alert("Error al inicializar: " + e.message); btn.disabled = false; btn.innerText = "⚠️ Reintentar Inicializar Catálogo"; }
+    }
+
+    function cargarCatalogoRobloxAdmin() {
+      const catRef = collection(db, "catalogo_roblox");
+      unsubscribeCatalogoRoblox = onSnapshot(catRef, (snapshot) => {
+        tablaCatalogoRoblox.innerHTML = '';
+        if (snapshot.empty) { tablaCatalogoRoblox.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #ff3333;">La base de datos de Roblox está vacía.</td></tr>'; document.getElementById('btnInitRoblox').style.display = "block"; return; }
+        document.getElementById('btnInitRoblox').style.display = "none";
+        let paquetes = []; snapshot.forEach((docSnap) => { paquetes.push({ id: docSnap.id, ...docSnap.data() }); });
+        paquetes.sort((a, b) => parseInt(a.producto) - parseInt(b.producto));
+        window.catalogoRobloxList = paquetes; window.actualizarDropdownInventario();
+        paquetes.forEach((data) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td><strong style="color:#ff3333">${data.producto} Robux</strong></td><td><strong style="font-size:16px;">${data.precio} Bs</strong></td><td><div class="acciones-grid"><button class="btn-icon btn-edit btn-editar-roblox" data-id="${data.id}" data-producto="${data.producto}" data-precio="${data.precio}">✏️ Modificar</button><button class="btn-icon btn-danger btn-eliminar-roblox" data-id="${data.id}">🗑️ Borrar</button></div></td>`;
+          tablaCatalogoRoblox.appendChild(tr);
+        });
+      });
+    }
+
+    formNuevoRoblox.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const producto = document.getElementById('inputRobuxNuevo').value.trim(); const precio = document.getElementById('inputPrecioRobloxNuevo').value.trim();
+      try { await addDoc(collection(db, "catalogo_roblox"), { producto, precio }); document.getElementById('inputRobuxNuevo').value = ''; document.getElementById('inputPrecioRobloxNuevo').value = ''; alert("✅ ¡Paquete de Roblox agregado con éxito y disponible en la tienda!"); } catch (error) { alert("Error al agregar paquete de Roblox: " + error.message); }
+    });
+
+    window.cancelarEdicionRoblox = function() { document.getElementById('panelEdicionRoblox').style.display = 'none'; document.getElementById('editDocIdRoblox').value = ''; document.getElementById('inputProductoRoblox').value = ''; document.getElementById('inputPrecioRoblox').value = ''; }
+
+    formCatalogoRoblox.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const docId = document.getElementById('editDocIdRoblox').value; const nuevoPrecio = document.getElementById('inputPrecioRoblox').value.trim();
+      if(docId && nuevoPrecio) { try { await updateDoc(doc(db, "catalogo_roblox", docId), { precio: nuevoPrecio }); cancelarEdicionRoblox(); } catch(error) { alert("Error al actualizar precio de Roblox: " + error.message); } }
+    });
+
+    window.actualizarDropdownInventario = function() {
+      const select = document.getElementById('invProducto'); const filtroSelect = document.getElementById('filtroInventarioProducto');
+      let opcionesHtml = '<option value="">Selecciona un paquete...</option>'; let filtroHtml = '<option value="">📂 Mostrar todos los productos</option>';
+      let lista = window.catalogoRobloxList;
+      if(lista && lista.length > 0) { lista.forEach(item => { let nombre = `${item.producto} Robux`; opcionesHtml += `<option value="${nombre}">${nombre}</option>`; filtroHtml += `<option value="${nombre}">${nombre}</option>`; }); } else { opcionesHtml = '<option value="">No hay paquetes configurados</option>'; }
+      select.innerHTML = opcionesHtml; if(filtroSelect) { const valorActual = filtroSelect.value; filtroSelect.innerHTML = filtroHtml; filtroSelect.value = valorActual; }
+    }
+
+    document.getElementById('formInventario').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const producto = document.getElementById('invProducto').value; const codigo = document.getElementById('invCodigo').value.trim(); const btnGuardar = document.getElementById('btnGuardarInventario');
+      if(!producto) return alert("Por favor, selecciona un producto del catálogo primero.");
+      try { btnGuardar.innerText = "Añadiendo..."; btnGuardar.disabled = true; await addDoc(collection(db, "inventario"), { juego: "Roblox", producto: producto, codigo: codigo, estado: "Disponible", timestamp: new Date() }); document.getElementById('invCodigo').value = ''; btnGuardar.innerText = "+ Añadir PIN"; btnGuardar.disabled = false; alert(`✅ PIN añadido exitosamente al stock de ${producto}`); } catch(err) { alert("Error al guardar en el inventario: " + err.message); btnGuardar.innerText = "+ Añadir PIN"; btnGuardar.disabled = false; }
+    });
+
+    function cargarInventarioAdmin() {
+      const invRef = collection(db, "inventario");
+      unsubscribeInventario = onSnapshot(invRef, (snapshot) => {
+        window.inventarioGlobal = []; snapshot.forEach(doc => window.inventarioGlobal.push({id: doc.id, ...doc.data()})); window.renderTablaInventario();
+      });
+    }
+
+    window.renderTablaInventario = function() {
+      const tbody = document.getElementById('tablaInventario'); const filtroSelect = document.getElementById('filtroInventarioProducto'); const productoSeleccionado = filtroSelect ? filtroSelect.value : '';
+      tbody.innerHTML = ''; let filtrados = window.inventarioGlobal.filter(item => item.juego === 'Roblox');
+      if (productoSeleccionado) { filtrados = filtrados.filter(item => item.producto === productoSeleccionado); }
+      if(filtrados.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color:var(--text-muted);">No hay códigos en stock para este filtro.</td></tr>'; return; }
+      filtrados.sort((a, b) => a.estado.localeCompare(b.estado));
+      filtrados.forEach(item => {
+        let badge = item.estado === 'Disponible' ? `<span class="badge-estado completado">Disponible</span>` : `<span class="badge-estado" style="background:rgba(255,51,51,0.2); color:var(--danger);">Entregado</span>`;
+        const tr = document.createElement('tr'); tr.innerHTML = `<td><strong>${item.producto}</strong></td><td><code style="color:#00ffcc; font-size:15px; letter-spacing:1px;">${item.codigo}</code></td><td>${badge}</td><td><button class="btn-icon btn-danger btn-eliminar-pin" data-id="${item.id}">🗑️ Borrar</button></td>`; tbody.appendChild(tr);
+      });
+    }
+
+    document.addEventListener('click', async (e) => {
+      if (e.target.classList.contains('btn-wa')) { const tel = e.target.getAttribute('data-tel'); const juego = e.target.getAttribute('data-juego'); if (tel) { const numLimpio = tel.replace(/\D/g, ''); const msg = encodeURIComponent(`¡Hola! Te escribimos de Level Up respecto a tu recarga de ${juego}.`); window.open(`https://wa.me/${numLimpio}?text=${msg}`, '_blank'); } else { alert("Este pedido no tiene número de teléfono registrado."); } }
+      if (e.target.classList.contains('btn-ok') && !e.target.classList.contains('vincular-pago-btn')) { const docId = e.target.getAttribute('data-id'); if (docId && confirm("¿Marcar este pedido como Completado / Despachado?")) { try { await updateDoc(doc(db, "pedidos", docId), { estado: "Completado" }); } catch (error) { alert("Error al actualizar pedido: " + error.message); } } }
+      if (e.target.classList.contains('vincular-pago-btn')) { const docId = e.target.getAttribute('data-id'); if(confirm("¿Seguro que quieres forzar este pago como Completado?")) { try { await updateDoc(doc(db, "pagos", docId), { estado: "completado" }); } catch (error) { alert("Error al actualizar el pago: " + error.message); } } }
+      if (e.target.classList.contains('elegir-paquete-compat')) { const docId = e.target.getAttribute('data-id'); const montoPagado = e.target.getAttribute('data-pagado'); const nuevoPaquete = prompt(`El cliente pagó ${montoPagado}. Ingresa el nombre del paquete alternativo:`, "Paquete Menor / Ajustado"); if (nuevoPaquete) { await updateDoc(doc(db, "pedidos", docId), { juego_o_producto: nuevoPaquete, montoEsperado: montoPagado, estado: "Ajustado" }); alert("✅ Paquete actualizado con éxito para que el cliente pueda continuar."); } }
+      if (e.target.classList.contains('btn-eliminar-pin')) { const docId = e.target.getAttribute('data-id'); if(confirm("¿Estás seguro de borrar este PIN del inventario?")) { try { await deleteDoc(doc(db, "inventario", docId)); } catch (error) { alert("Error al borrar: " + error.message); } } }
+      if (e.target.classList.contains('btn-eliminar-roblox')) { const id = e.target.getAttribute('data-id'); if (confirm("¿Estás seguro de eliminar este paquete del catálogo de Roblox?")) { try { await deleteDoc(doc(db, "catalogo_roblox", id)); } catch(error) { alert("Error al eliminar: " + error.message); } } }
+      if (e.target.classList.contains('btn-eliminar-paquete')) { const id = e.target.getAttribute('data-id'); if (confirm("¿Estás seguro de eliminar este paquete?")) { await deleteDoc(doc(db, "catalogo_freefire", id)); } }
+      if (e.target.classList.contains('btn-editar-paquete')) { const id = e.target.getAttribute('data-id'); document.getElementById('editDocIdCat').value = id; document.getElementById('inputDiamantes').value = e.target.getAttribute('data-diamantes'); document.getElementById('inputPrecio').value = e.target.getAttribute('data-precio'); document.getElementById('formTituloCat').innerText = "✏️ Editando Paquete"; document.getElementById('btnFormSubmitCat').innerText = "💾 Guardar Cambios"; document.getElementById('btnCancelarEditCat').style.display = 'inline-block'; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      if (e.target.classList.contains('btn-editar-roblox')) { document.getElementById('panelEdicionRoblox').style.display = 'block'; document.getElementById('editDocIdRoblox').value = e.target.getAttribute('data-id'); document.getElementById('inputProductoRoblox').value = e.target.getAttribute('data-producto') + " Robux"; document.getElementById('inputPrecioRoblox').value = e.target.getAttribute('data-precio'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      if (e.target.classList.contains('btn-eliminar-cupon')) { const id = e.target.getAttribute('data-id'); if (confirm("¿Estás seguro de eliminar este cupón?")) { await deleteDoc(doc(db, "cupones", id)); } }
+      if (e.target.classList.contains('btn-editar-cupon')) { const id = e.target.getAttribute('data-id'); document.getElementById('editDocIdCup').value = id; document.getElementById('inputCodigoCup').value = e.target.getAttribute('data-codigo'); document.getElementById('inputPorcentajeCup').value = e.target.getAttribute('data-porcentaje'); document.getElementById('inputLimiteCup').value = e.target.getAttribute('data-limite'); document.getElementById('usosActualesCup').value = e.target.getAttribute('data-usos'); document.getElementById('formTituloCup').innerText = "✏️ Editando Cupón"; document.getElementById('btnFormSubmitCup').innerText = "💾 Guardar Cambios"; document.getElementById('btnCancelarEditCup').style.display = 'inline-block'; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    });
+  </script>
+</body>
+</html>

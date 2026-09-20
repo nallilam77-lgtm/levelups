@@ -1,0 +1,28 @@
+{
+  "telefono": "[lv=Telefono_BDV]",
+  "referencia": "[lv=Referencia_BDV]",
+  "monto": "[lv=Monto_BDV]"
+}
+
+
+
+{
+  "telefono": "[lv=Telefono_BDV]",
+  "referencia": "[lv=Referencia_BDV]",
+  "monto": "[lv=Monto_BDV]"
+}
+
+
+var textoNotificacion = "Recibiste una transferencia de otros bancos de PEDRO MIGUEL DIAZ MUÃ...OZ por Bs. 100,00 bajo el número de operación 36069413.";
+
+// Buscar formato de transferencia BDV
+var regexTransferencia = /transferencia de otros bancos de (.*?) por Bs\. ([\d,.]+) bajo el número de operación (\d+)/i;
+var match = textoNotificacion.match(regexTransferencia);
+
+if (match) {
+  var nombre = match[1].trim();
+  var monto = match[2];
+  var referencia = match[3];
+  
+  // Aquí guardas en tu hoja de pagos
+}
