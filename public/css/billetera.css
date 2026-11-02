@@ -1,0 +1,70 @@
+/* Billetera (billetera.html). Se apoya en paginas-legales.css (barra, menú, encabezado, variables) y en
+   creadores.css (panel-caja, campos, botón, estadísticas, tabla). Colores de Level Up: ver .claude/UI_RULES.md */
+
+:root {
+  --danger: #ff3b3b;
+  --warning: #fbbf24;
+  --campo-fondo: rgba(11, 17, 32, 0.75);
+}
+
+.billetera-container { max-width: 760px; margin: 0 auto 48px; padding: 0 16px; display: grid; gap: 32px; }
+.billetera-container > * { min-width: 0; }
+.oculto { display: none !important; }
+
+/* Pestañas Entrar / Crear cuenta */
+.pestanas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; padding: 6px; border-radius: 14px; background: var(--campo-fondo); border: 1px solid var(--border-glass); }
+.pestana {
+  min-height: 44px; border: none; border-radius: 10px; cursor: pointer; background: transparent; color: var(--text-muted);
+  font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.pestana[aria-selected="true"] { background: var(--cta-gradient); color: var(--on-cta); box-shadow: var(--shadow-glow); }
+.enlace-texto { display: inline-block; margin-top: 12px; background: none; border: none; color: var(--primary); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; min-height: 44px; }
+.enlace-texto:hover, .enlace-texto:focus-visible { text-decoration: underline; }
+
+/* Saldo */
+.saldo-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.saldo-cuenta { font-size: 12px; color: var(--text-muted); word-break: break-all; }
+.saldo-monto {
+  margin: 16px 0 4px; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(32px, 9vw, 44px);
+  color: var(--accent-neon); text-shadow: 0 0 24px rgba(57, 255, 20, 0.25); white-space: nowrap;
+}
+.saldo-nota { font-size: 12px; color: var(--text-muted); }
+.btn-secundario {
+  min-height: 44px; padding: 0 16px; border-radius: 12px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 900;
+  font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; background: rgba(15, 23, 42, 0.6); color: var(--primary);
+  border: 1px solid rgba(34, 211, 238, 0.4); transition: box-shadow 0.25s ease;
+}
+.btn-secundario:hover, .btn-secundario:focus-visible { box-shadow: var(--shadow-glow-hover); }
+
+/* Datos de Pago Móvil */
+.datos-pago { display: grid; gap: 8px; margin-bottom: 20px; padding: 20px; border-radius: 14px; background: var(--campo-fondo); border: 1px solid rgba(34, 211, 238, 0.4); }
+.datos-pago div { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--text-muted); }
+.datos-pago strong { color: var(--text-main); text-align: right; word-break: break-all; }
+
+/* Compra */
+.campo select {
+  width: 100%; min-height: 48px; padding: 0 16px; border-radius: 12px; font-size: 16px; font-family: 'Poppins', sans-serif;
+  background: var(--campo-fondo); border: 1px solid var(--border-glass); color: var(--text-main); outline: none;
+}
+.campo select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15); }
+.campo select option { background: var(--bg-base); }
+.jugador-verificado { margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--accent-neon); }
+.jugador-verificado:empty { display: none; }
+.jugador-verificado.aviso { color: var(--warning); }
+
+.panel-mensaje.exito { color: var(--accent-neon); }
+.panel-mensaje.aviso { color: var(--warning); }
+
+/* Estados de los pedidos */
+.estado { font-weight: 700; }
+.estado-entregado { color: var(--accent-neon); }
+.estado-enviado, .estado-pagado { color: var(--primary); }
+.estado-revisar { color: var(--warning); }
+.estado-reembolsado { color: var(--text-muted); }
+.monto-mas { color: var(--accent-neon); font-weight: 700; }
+.monto-menos { color: var(--text-main); font-weight: 700; }
+
+@media (min-width: 600px) {
+  .compra-campos { grid-template-columns: 1fr 1fr; }
+}

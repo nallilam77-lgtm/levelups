@@ -12,6 +12,8 @@ export const FASES = {
   apiFreeFire: '4. RECARGA DE FREE FIRE EN LA API DEL PROVEEDOR (Central One)',
   apiMobileLegends: '4. RECARGA DE MOBILE LEGENDS EN LA API DEL PROVEEDOR (Central One)',
   cierre: '5. CIERRE DEL PEDIDO (marcar pago usado / registrar finalizado)',
+  billeteraCarga: 'BILLETERA · CARGA DE SALDO (pago móvil → Supabase)',
+  billeteraCompra: 'BILLETERA · COMPRA CON SALDO (Supabase → Central One)',
   inesperado: 'ERROR INESPERADO (excepción o respuesta no prevista en Vercel)',
 };
 

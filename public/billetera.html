@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // Modo ligero en todos los celulares y tablets (pantalla táctil), con ahorro de datos o "reducir movimiento": sin desenfoque, animaciones ni transiciones (css/ligero.css)
+    (function () { var n = navigator, c = n.connection || {}; if ((n.deviceMemory && n.deviceMemory <= 2) || (n.hardwareConcurrency && n.hardwareConcurrency <= 4) || c.saveData || /(^|\D)2g/.test(c.effectiveType || '') || (window.matchMedia && (matchMedia('(pointer: coarse)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches))) { document.documentElement.classList.add('ligero'); var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'css/ligero.css?v=3'; document.head.appendChild(l); } })();
+  </script>
+  <meta name="description" content="Tu billetera Level Up: carga saldo con Pago Móvil una vez y recarga Free Fire al instante sin enviar comprobantes.">
+  <meta name="theme-color" content="#0f172a">
+  <title>Mi Billetera - Level Up</title>
+  <link rel="canonical" href="https://www.levelupstore.online/billetera.html">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/paginas-legales.css">
+  <link rel="stylesheet" href="css/creadores.css">
+  <link rel="stylesheet" href="css/billetera.css?v=1">
+  <link rel="stylesheet" href="css/pie-legal.css">
+  <!-- Inicio de sesión (Supabase Auth). El saldo nunca se toca desde el navegador: todo pasa por /api/billetera -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js" defer></script>
+  <script src="js/datos-pago.js" defer></script>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+
+  <aside class="sidebar" id="sidebarMenu">
+    <button type="button" class="close-btn" onclick="toggleMenu()" aria-label="Cerrar menú">✖</button>
+    <div class="sidebar-logo">
+      <img src="logo-chico.png" alt="Logo Level Up" width="36" height="35"> LEVEL<span>UP</span>
+    </div>
+
+    <a href="index.html">🏠 Inicio</a>
+    <a href="billetera.html" aria-current="page">💰 Mi Billetera</a>
+    <a href="freefire.html">🔥 Free Fire</a>
+    <a href="roblox.html">🧱 Roblox</a>
+    <a href="bloodstrike.html">🎯 Blood Strike</a>
+    <a href="mobilelegends.html">💎 Mobile Legends</a>
+    <a href="creadores.html">⭐ Panel de Creadores</a>
+    <a href="terminos.html">📜 Términos y Condiciones</a>
+    <a href="privacidad.html">🔒 Política de Privacidad</a>
+    <a href="reembolsos.html">💸 Política de Reembolsos</a>
+  </aside>
+
+  <div class="barra-superior">
+    <button type="button" class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir menú">☰</button>
+    <a href="index.html" class="nav-logo">
+      <img src="logo-chico.png" alt="Logo Level Up" width="36" height="35"> LEVEL<span>UP</span>
+    </a>
+  </div>
+
+  <main>
+    <header class="animate-up">
+      <h1 class="titulo-principal">💰 Mi Billetera</h1>
+      <p class="subtitulo">Carga saldo con Pago Móvil y recarga Free Fire al instante, sin enviar comprobantes cada vez.</p>
+    </header>
+
+    <div class="billetera-container">
+
+      <!-- SIN SESIÓN: entrar o crear cuenta -->
+      <section class="panel-caja animate-up oculto" id="cajaAcceso" aria-labelledby="tituloAcceso">
+        <h2 id="tituloAcceso">🔐 Entra a tu billetera</h2>
+        <p id="textoAcceso">Usa tu correo y una contraseña. Tu saldo queda guardado en tu cuenta.</p>
+
+        <div class="pestanas" role="tablist" id="pestanasAcceso">
+          <button type="button" class="pestana" role="tab" aria-selected="true" data-modo="entrar">Entrar</button>
+          <button type="button" class="pestana" role="tab" aria-selected="false" data-modo="crear">Crear cuenta</button>
+        </div>
+
+        <form id="formAcceso" novalidate>
+          <div class="consulta-campos">
+            <div class="campo">
+              <label for="inputCorreo">Correo</label>
+              <input type="email" id="inputCorreo" placeholder="tucorreo@gmail.com" autocomplete="email" maxlength="120" required>
+            </div>
+            <div class="campo" id="campoClave">
+              <label for="inputClave">Contraseña</label>
+              <input type="password" id="inputClave" placeholder="Mínimo 8 caracteres" autocomplete="current-password" minlength="8" maxlength="72" required>
+            </div>
+          </div>
+          <button type="submit" class="btn-consultar-panel" id="btnAcceso">Entrar</button>
+        </form>
+        <button type="button" class="enlace-texto" id="btnOlvide">¿Olvidaste tu contraseña?</button>
+        <div class="panel-mensaje" id="mensajeAcceso" role="status" aria-live="polite"></div>
+      </section>
+
+      <!-- NUEVA CONTRASEÑA (enlace del correo de recuperación) -->
+      <section class="panel-caja animate-up oculto" id="cajaNuevaClave" aria-labelledby="tituloNuevaClave">
+        <h2 id="tituloNuevaClave">🔑 Nueva contraseña</h2>
+        <p>Escribe tu nueva contraseña para entrar a tu billetera.</p>
+        <form id="formNuevaClave" novalidate>
+          <div class="campo">
+            <label for="inputNuevaClave">Nueva contraseña</label>
+            <input type="password" id="inputNuevaClave" placeholder="Mínimo 8 caracteres" autocomplete="new-password" minlength="8" maxlength="72" required>
+          </div>
+          <button type="submit" class="btn-consultar-panel" id="btnNuevaClave">Guardar</button>
+        </form>
+        <div class="panel-mensaje" id="mensajeNuevaClave" role="status" aria-live="polite"></div>
+      </section>
+
+      <!-- CON SESIÓN -->
+      <section class="panel-caja animate-up oculto" id="cajaSaldo" aria-labelledby="tituloSaldo">
+        <div class="saldo-cabecera">
+          <h2 id="tituloSaldo">💳 Tu saldo</h2>
+          <button type="button" class="btn-secundario" id="btnSalir">Salir</button>
+        </div>
+        <p class="saldo-cuenta" id="textoCuenta"></p>
+        <p class="saldo-monto" id="textoSaldo">—</p>
+        <p class="saldo-nota">El saldo solo sirve para recargas en Level Up.</p>
+        <div class="panel-mensaje" id="mensajeSaldo" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="panel-caja animate-up oculto" id="cajaCargar" aria-labelledby="tituloCargar">
+        <h2 id="tituloCargar">➕ Cargar saldo</h2>
+        <p>Haz un Pago Móvil por el monto que quieras y escribe los últimos 5 dígitos de la referencia. Sumamos a tu saldo todo lo que pagaste.</p>
+        <div class="datos-pago" id="datosPago">
+          <div>Cargando datos de pago…</div>
+        </div>
+        <form id="formCargar" novalidate>
+          <div class="campo">
+            <label for="inputReferencia">Últimos 5 dígitos de la referencia</label>
+            <input type="text" id="inputReferencia" placeholder="Ej: 12345" inputmode="numeric" maxlength="5" autocomplete="off" required>
+          </div>
+          <button type="submit" class="btn-consultar-panel" id="btnCargar">Cargar a mi saldo</button>
+        </form>
+        <div class="panel-mensaje" id="mensajeCargar" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="panel-caja animate-up oculto" id="cajaComprar" aria-labelledby="tituloComprar">
+        <h2 id="tituloComprar">🔥 Recargar Free Fire con saldo</h2>
+        <p>Elige el paquete, escribe el ID del jugador y lo enviamos al instante.</p>
+        <form id="formComprar" novalidate>
+          <div class="consulta-campos compra-campos">
+            <div class="campo">
+              <label for="selectPaquete">Paquete</label>
+              <select id="selectPaquete" required></select>
+            </div>
+            <div class="campo">
+              <label for="inputIdJugador">ID del jugador</label>
+              <input type="text" id="inputIdJugador" placeholder="Ej: 123456789" inputmode="numeric" maxlength="15" autocomplete="off" required>
+              <p class="jugador-verificado" id="textoJugador" aria-live="polite"></p>
+            </div>
+          </div>
+          <button type="submit" class="btn-consultar-panel" id="btnComprar">Verificar ID</button>
+        </form>
+        <div class="panel-mensaje" id="mensajeComprar" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="panel-caja animate-up oculto movimientos" id="cajaHistorial" aria-labelledby="tituloHistorial">
+        <h2 id="tituloHistorial">🧾 Tus recargas con saldo</h2>
+        <div class="tabla-scroll">
+          <table>
+            <thead><tr><th>Fecha</th><th>Paquete</th><th>ID</th><th>Estado</th></tr></thead>
+            <tbody id="tablaPedidos"></tbody>
+          </table>
+        </div>
+        <h3 style="margin-top: 24px;">Movimientos</h3>
+        <div class="tabla-scroll">
+          <table>
+            <thead><tr><th>Fecha</th><th>Detalle</th><th>Monto</th><th>Saldo</th></tr></thead>
+            <tbody id="tablaMovimientos"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="pie-legal">
+    <div class="pie-legal-enlaces" role="navigation" aria-label="Información legal">
+      <a href="terminos.html">Términos y Condiciones</a>
+      <a href="privacidad.html">Política de Privacidad</a>
+      <a href="reembolsos.html">Política de Reembolsos</a>
+    </div>
+    <p class="pie-legal-aviso">Level Up es un servicio de recarga independiente. No está afiliado, patrocinado ni respaldado por Garena (Free Fire), Roblox Corporation ni NetEase Games (Blood Strike). Todas las marcas y logotipos pertenecen a sus respectivos dueños.</p>
+    <p class="pie-legal-copy">&copy; 2026 <strong>Level Up</strong>. Todos los derechos reservados.</p>
+  </footer>
+
+  <a href="https://wa.me/584228887089" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Escribir a Soporte por WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12.031 0C5.385 0 0 5.383 0 12.029c0 2.124.553 4.195 1.605 6.01L.036 24l6.11-1.603c1.737 1.002 3.738 1.531 5.885 1.531 6.643 0 12.028-5.381 12.028-12.027C24.059 5.383 18.675 0 12.031 0zm3.565 17.27c-.54.269-3.187.584-3.557.584-.37 0-1.802-.234-4.225-2.656-2.424-2.425-2.657-3.856-2.657-4.226 0-.37.316-3.018.584-3.557.269-.54.912-.767 1.451-.497.54.269 1.433 3.493 1.433 3.864 0 .37-.197.808-.466 1.077-.466.466.269.269-.538.448-.179 1.077.359.627 1.614 1.882 2.241 2.241.628.359.808.09 1.077-.179.269-.269.808-.466 1.077-.466.37 0 3.595.892 3.864 1.432.27.539.043 1.182-.497 1.451z"/>
+    </svg>
+  </a>
+
+  <script>
+    function toggleMenu() {
+      const sidebar = document.getElementById('sidebarMenu');
+      const overlay = document.getElementById('menuOverlay');
+      const abierto = sidebar.classList.toggle('open');
+      overlay.style.display = abierto ? 'block' : 'none';
+      document.body.classList.toggle('no-scroll', abierto);
+    }
+  </script>
+
+  <script>
+    // =========================================================================
+    // BILLETERA: sesión con Supabase Auth (correo + contraseña) y todo lo demás por /api/billetera.
+    // La URL y la publishable key NO son secretas (solo permiten iniciar sesión; el saldo lo protege el RLS
+    // y lo cambia solo Vercel). Todo lo que llega del servidor se pinta con textContent.
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      const SUPABASE_URL = 'https://qaxgvfzpzywfgcwnalfr.supabase.co';
+      const SUPABASE_PUBLICABLE = 'sb_publishable_iWFflYD8yK3tQIWcORNz7g_OPfvmvng';
+      const $ = (id) => document.getElementById(id);
+      const formatoBs = (n) => `${Number(n).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs`;
+      const formatoFecha = (iso) => new Date(iso).toLocaleString('es-VE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      const TEXTO_ESTADO = { pagado: 'Procesando', enviado: 'Enviada', entregado: 'Entregada', reembolsado: 'Devuelta', revisar: 'En revisión' };
+      const TEXTO_TIPO = { carga: 'Carga', compra: 'Recarga', reembolso: 'Devolución', ajuste: 'Ajuste' };
+
+      if (!window.supabase?.createClient) {
+        $('cajaAcceso').classList.remove('oculto');
+        mensaje('mensajeAcceso', 'No pudimos cargar el inicio de sesión. Revisa tu conexión y recarga la página.', 'error');
+        return;
+      }
+      const cliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLICABLE, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+
+      let modo = 'entrar';
+      let jugadorVerificado = null; // { id, nombre }
+      let paquetes = [];
+
+      function mensaje(id, texto, tipo = 'error') {
+        const el = $(id);
+        el.className = `panel-mensaje ${tipo}`;
+        el.textContent = texto;
+      }
+      const mostrar = (ids, visible) => ids.forEach((id) => $(id).classList.toggle('oculto', !visible));
+      const CAJAS_SESION = ['cajaSaldo', 'cajaCargar', 'cajaComprar', 'cajaHistorial'];
+
+      async function llamarApi(accion, cuerpo = {}) {
+        const { data } = await cliente.auth.getSession();
+        const token = data.session?.access_token;
+        if (!token) { pantallaAcceso(); throw new Error('Tu sesión venció. Vuelve a iniciar sesión.'); }
+        const res = await fetch(`/api/billetera?accion=${accion}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify(cuerpo),
+        });
+        const datos = await res.json().catch(() => ({ status: 'error', message: 'Respuesta inválida del servidor.' }));
+        if (res.status === 401) { await cliente.auth.signOut(); pantallaAcceso(); }
+        return datos;
+      }
+
+      // ---------------- Acceso ----------------
+      function pantallaAcceso() {
+        mostrar(CAJAS_SESION, false);
+        mostrar(['cajaNuevaClave'], false);
+        mostrar(['cajaAcceso'], true);
+      }
+      function cambiarModo(nuevo) {
+        modo = nuevo;
+        document.querySelectorAll('#pestanasAcceso .pestana').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.modo === nuevo)));
+        $('btnAcceso').textContent = nuevo === 'crear' ? 'Crear cuenta' : 'Entrar';
+        $('inputClave').autocomplete = nuevo === 'crear' ? 'new-password' : 'current-password';
+        $('mensajeAcceso').textContent = '';
+      }
+      document.querySelectorAll('#pestanasAcceso .pestana').forEach((b) => b.addEventListener('click', () => cambiarModo(b.dataset.modo)));
+
+      $('formAcceso').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const correo = $('inputCorreo').value.trim().toLowerCase();
+        const clave = $('inputClave').value;
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)) return mensaje('mensajeAcceso', 'Escribe un correo válido.');
+        if (clave.length < 8) return mensaje('mensajeAcceso', 'La contraseña debe tener al menos 8 caracteres.');
+        const boton = $('btnAcceso');
+        boton.disabled = true;
+        try {
+          if (modo === 'crear') {
+            const { data, error } = await cliente.auth.signUp({ email: correo, password: clave, options: { emailRedirectTo: `${location.origin}/billetera.html` } });
+            if (error) throw error;
+            if (!data.session) mensaje('mensajeAcceso', `Te enviamos un correo a ${correo}. Ábrelo y toca el enlace para activar tu cuenta.`, 'exito');
+          } else {
+            const { error } = await cliente.auth.signInWithPassword({ email: correo, password: clave });
+            if (error) throw error;
+          }
+        } catch (error) {
+          const texto = String(error?.message || '');
+          mensaje('mensajeAcceso', /invalid login/i.test(texto) ? 'Correo o contraseña incorrectos.'
+            : /not confirmed/i.test(texto) ? 'Primero activa tu cuenta con el enlace que te enviamos por correo.'
+              : /already registered/i.test(texto) ? 'Ese correo ya tiene cuenta: toca "Entrar".'
+                : /rate limit|too many/i.test(texto) ? 'Demasiados intentos. Espera unos minutos.'
+                  : 'No pudimos entrar. Intenta de nuevo.');
+        } finally {
+          boton.disabled = false;
+        }
+      });
+
+      $('btnOlvide').addEventListener('click', async () => {
+        const correo = $('inputCorreo').value.trim().toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)) return mensaje('mensajeAcceso', 'Escribe tu correo arriba y vuelve a tocar "¿Olvidaste tu contraseña?".');
+        const { error } = await cliente.auth.resetPasswordForEmail(correo, { redirectTo: `${location.origin}/billetera.html` });
+        mensaje('mensajeAcceso', error ? 'No pudimos enviar el correo. Intenta en unos minutos.' : `Si ${correo} tiene cuenta, te llegará un enlace para cambiar la contraseña.`, error ? 'error' : 'exito');
+      });
+
+      $('formNuevaClave').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const clave = $('inputNuevaClave').value;
+        if (clave.length < 8) return mensaje('mensajeNuevaClave', 'La contraseña debe tener al menos 8 caracteres.');
+        const { error } = await cliente.auth.updateUser({ password: clave });
+        if (error) return mensaje('mensajeNuevaClave', 'No pudimos guardar la contraseña. Pide otro enlace.');
+        mostrar(['cajaNuevaClave'], false);
+        entrar();
+      });
+
+      $('btnSalir').addEventListener('click', async () => { await cliente.auth.signOut(); pantallaAcceso(); });
+
+      // ---------------- Con sesión ----------------
+      async function entrar() {
+        mostrar(['cajaAcceso'], false);
+        mostrar(CAJAS_SESION, true);
+        cargarDatosPago();
+        await refrescar();
+      }
+
+      async function refrescar() {
+        try {
+          const d = await llamarApi('estado');
+          if (d.status !== 'success') return mensaje('mensajeSaldo', d.message || 'No pudimos leer tu saldo.');
+          $('mensajeSaldo').textContent = '';
+          $('textoCuenta').textContent = d.email;
+          $('textoSaldo').textContent = formatoBs(d.saldo);
+          pintarPaquetes(d.paquetes);
+          pintarTabla('tablaPedidos', d.pedidos, 'Todavía no has recargado con saldo.', (p) => [
+            [formatoFecha(p.fecha)], [p.paquete], [p.nombre ? `${p.jugador} · ${p.nombre}` : p.jugador],
+            [TEXTO_ESTADO[p.estado] || p.estado, `estado estado-${p.estado}`],
+          ]);
+          pintarTabla('tablaMovimientos', d.movimientos, 'Todavía no hay movimientos. Carga saldo para empezar.', (m) => [
+            [formatoFecha(m.fecha)], [`${TEXTO_TIPO[m.tipo] || m.tipo}${m.detalle ? ` · ${m.detalle}` : ''}`],
+            [`${m.monto > 0 ? '+' : ''}${formatoBs(m.monto)}`, m.monto > 0 ? 'monto-mas' : 'monto-menos'], [formatoBs(m.saldo)],
+          ]);
+        } catch (error) {
+          mensaje('mensajeSaldo', error.message || 'No pudimos leer tu saldo. Revisa tu conexión.');
+        }
+      }
+
+      function pintarTabla(id, filas, vacio, celdas) {
+        const tbody = $(id);
+        tbody.replaceChildren();
+        if (!filas.length) {
+          const celda = tbody.insertRow().insertCell();
+          celda.colSpan = 4;
+          celda.className = 'sin-movimientos';
+          celda.textContent = vacio;
+          return;
+        }
+        for (const fila of filas) {
+          const tr = tbody.insertRow();
+          for (const [texto, clase] of celdas(fila)) {
+            const td = tr.insertCell();
+            td.textContent = texto;
+            if (clase) td.className = clase;
+          }
+        }
+      }
+
+      function pintarPaquetes(lista) {
+        paquetes = lista || [];
+        const select = $('selectPaquete');
+        const elegido = select.value;
+        select.replaceChildren();
+        if (!paquetes.length) {
+          select.add(new Option('No disponible por ahora', ''));
+          select.disabled = true;
+          $('btnComprar').disabled = true;
+          return;
+        }
+        select.disabled = false;
+        $('btnComprar').disabled = false;
+        for (const p of paquetes) select.add(new Option(`${p.nombre} · ${formatoBs(p.precio)}`, p.clave));
+        if (paquetes.some((p) => p.clave === elegido)) select.value = elegido;
+      }
+
+      async function cargarDatosPago() {
+        const caja = $('datosPago');
+        const datos = await window.DatosPago?.leer();
+        caja.replaceChildren();
+        if (!datos) {
+          const div = document.createElement('div');
+          div.textContent = 'Pídenos los datos de Pago Móvil por WhatsApp.';
+          caja.append(div);
+          return;
+        }
+        for (const [etiqueta, valor] of [['Banco', datos.banco], ['Teléfono', datos.telefono], ['Cédula', datos.cedula]]) {
+          const div = document.createElement('div');
+          const strong = document.createElement('strong');
+          div.textContent = etiqueta;
+          strong.textContent = valor;
+          div.append(strong);
+          caja.append(div);
+        }
+      }
+
+      $('inputReferencia').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5); });
+      $('formCargar').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const referencia = $('inputReferencia').value;
+        if (!/^\d{5}$/.test(referencia)) return mensaje('mensajeCargar', 'Escribe exactamente los últimos 5 dígitos de la referencia.');
+        const boton = $('btnCargar');
+        boton.disabled = true;
+        boton.textContent = 'Verificando pago…';
+        mensaje('mensajeCargar', '', 'exito');
+        try {
+          const d = await llamarApi('cargar', { referencia });
+          if (d.status === 'success') {
+            mensaje('mensajeCargar', d.message, 'exito');
+            $('inputReferencia').value = '';
+            $('textoSaldo').textContent = formatoBs(d.saldo);
+            refrescar();
+          } else {
+            mensaje('mensajeCargar', d.message || 'No pudimos cargar tu pago.', d.revision ? 'aviso' : 'error');
+          }
+        } catch (error) {
+          mensaje('mensajeCargar', 'No pudimos verificar tu pago. Revisa tu conexión: si ya se descontó, aparecerá en tus movimientos.');
+        } finally {
+          boton.disabled = false;
+          boton.textContent = 'Cargar a mi saldo';
+        }
+      });
+
+      // Compra en dos pasos: primero se verifica el ID (muestra el nombre del jugador), después se confirma
+      const reiniciarCompra = () => {
+        jugadorVerificado = null;
+        $('textoJugador').textContent = '';
+        $('btnComprar').textContent = 'Verificar ID';
+      };
+      $('inputIdJugador').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 15); reiniciarCompra(); });
+      $('selectPaquete').addEventListener('change', () => { if (jugadorVerificado) $('btnComprar').textContent = textoBotonComprar(); });
+      const textoBotonComprar = () => {
+        const p = paquetes.find((x) => x.clave === $('selectPaquete').value);
+        return p ? `Comprar ${p.nombre} · ${formatoBs(p.precio)}` : 'Comprar';
+      };
+
+      $('formComprar').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = $('inputIdJugador').value;
+        const clave = $('selectPaquete').value;
+        if (!/^\d{5,15}$/.test(id)) return mensaje('mensajeComprar', 'El ID debe tener entre 5 y 15 números.');
+        if (!clave) return mensaje('mensajeComprar', 'Elige un paquete.');
+        const boton = $('btnComprar');
+        boton.disabled = true;
+        $('mensajeComprar').textContent = '';
+        try {
+          if (!jugadorVerificado || jugadorVerificado.id !== id) {
+            boton.textContent = 'Verificando…';
+            let nombre = '';
+            let valido = null;
+            try {
+              const r = await fetch('/api/juego?juego=freefire&accion=verificar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+              const v = await r.json();
+              valido = r.ok ? v.valid === true : null;
+              nombre = v.player_name || '';
+            } catch (error) { valido = null; }
+            if (valido === false) {
+              boton.textContent = 'Verificar ID';
+              return mensaje('mensajeComprar', 'Ese ID no existe en Free Fire. Revísalo.');
+            }
+            jugadorVerificado = { id, nombre };
+            const texto = $('textoJugador');
+            texto.className = valido ? 'jugador-verificado' : 'jugador-verificado aviso';
+            texto.textContent = valido ? `✅ Jugador: ${nombre || 'verificado'}` : '⚠️ No pudimos verificar el ID. Si estás seguro, puedes comprar igual.';
+            boton.textContent = textoBotonComprar();
+            return;
+          }
+          boton.textContent = 'Enviando recarga…';
+          const d = await llamarApi('comprar', { id, paquete: clave, nombre: jugadorVerificado.nombre });
+          mensaje('mensajeComprar', d.message || 'No pudimos completar la compra.', d.status === 'success' ? 'exito' : d.revision ? 'aviso' : 'error');
+          if (d.status === 'success') reiniciarCompra();
+          else boton.textContent = textoBotonComprar();
+          refrescar();
+        } catch (error) {
+          mensaje('mensajeComprar', 'Se cortó la conexión. Revisa tus movimientos antes de intentar de nuevo.');
+          boton.textContent = textoBotonComprar();
+          refrescar();
+        } finally {
+          boton.disabled = false;
+        }
+      });
+
+      // ---------------- Arranque ----------------
+      cliente.auth.onAuthStateChange((evento, sesion) => {
+        if (evento === 'PASSWORD_RECOVERY') {
+          mostrar(['cajaAcceso', ...CAJAS_SESION], false);
+          mostrar(['cajaNuevaClave'], true);
+        } else if (evento === 'SIGNED_IN' && $('cajaSaldo').classList.contains('oculto') && $('cajaNuevaClave').classList.contains('oculto')) {
+          // setTimeout: Supabase pide no llamar a sus funciones dentro de este aviso
+          setTimeout(entrar, 0);
+        } else if (evento === 'SIGNED_OUT') {
+          pantallaAcceso();
+        }
+      });
+      cliente.auth.getSession().then(({ data }) => {
+        if (!$('cajaNuevaClave').classList.contains('oculto')) return;
+        if (data.session) entrar(); else pantallaAcceso();
+      });
+    });
+  </script>
+
+</body>
+</html>

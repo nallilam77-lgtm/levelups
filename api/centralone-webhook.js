@@ -3,6 +3,9 @@ import { llamarScript, leerCuerpoCrudo } from './_lib/externo.js';
 import { firmaCentralOneValida, primerCodigo, leerCodigos } from './_lib/centralone.js';
 import { registrarUsoDescuento } from './_lib/descuentos.js';
 import { limpiarMontoVES } from './_lib/recarga-comun.js';
+import { FASES } from './_lib/reporte.js';
+import { rpc, supabaseConfigurado, ErrorSupabase } from './_lib/supabase.js';
+import { PEDIDO_BILLETERA, avisarEnHoja } from './_lib/billetera.js';
 
 // Webhook de Central One: POST https://levelupstore.online/api/centralone-webhook
 // (registrar en el portal de Central One: Integración → Webhooks, con los eventos de cierre de pedido;
@@ -17,6 +20,9 @@ import { limpiarMontoVES } from './_lib/recarga-comun.js';
 //  - Roblox (idempotency_key "rbx-…"): roblox.gs (GAS_URL) anota el código que la compra no alcanzó a
 //    esperar (entregar_api: "pedidos_api" dice que hay que enviarlo por WhatsApp) o libera el pago si
 //    falló (liberar_api). Las dos miran el estado de la fila: un aviso repetido no cambia nada.
+//  - Billetera (idempotency_key "bil-…", api/billetera.js): el pedido de la tabla "pedidos" de Supabase pasa
+//    a "entregado"; fallido o cancelado → el saldo se devuelve al cliente (una sola vez, nunca si ya se
+//    entregó). Entrega parcial, reembolso de Central One o entrega después de devolver → fila en "errores".
 //
 // Central One espera un 2xx en menos de 10 s; si no, reintenta (5 y 25 min, 2 h, 10 h…) y abandona a
 // los 6 intentos. Por eso: firma mala -> 401; la hoja no respondió -> 503 (se puede repetir sin
@@ -95,6 +101,7 @@ export default async function handler(req, res) {
   }
 
   if (PEDIDO_ROBLOX.test(idPedido)) return avisoRoblox(res, { aviso, evento, ordenCentralOne, idPedido });
+  if (PEDIDO_BILLETERA.test(idPedido)) return avisoBilletera(res, { evento, estado, ordenCentralOne, idPedido });
 
   // Free Fire, Blood Strike o Mobile Legends: las hojas anotan el estado igual (acción estado_fazer) y
   // solo la que tiene el pedido lo aplica. Con idempotency_key se sabe a cuál va; sin ella (o con una que
@@ -177,6 +184,52 @@ async function avisoRoblox(res, { aviso, evento, ordenCentralOne, idPedido }) {
     return res.status(200).json({ ok: true });
   } catch (error) {
     console.error(`❌ centralone-webhook: no se pudo anotar el pedido de Roblox ${ordenCentralOne} (${evento}): ${error.message}. Central One lo reintentará.`);
+    return res.status(503).json({ ok: false });
+  }
+}
+
+// Recarga de Free Fire pagada con saldo (Supabase). billetera_actualizar_pedido es idempotente: un aviso
+// repetido no devuelve dos veces ni cambia un pedido ya devuelto. Lo que hay que revisar a mano va a
+// "errores" de la hoja de Free Fire DESPUÉS de responder (Central One corta a los 10 s).
+async function avisoBilletera(res, { evento, estado, ordenCentralOne, idPedido }) {
+  if (!supabaseConfigurado()) {
+    console.error('🚨 centralone-webhook: faltan SUPABASE_URL / SUPABASE_SECRET_KEY en Vercel (aviso de una compra con saldo)');
+    return res.status(503).json({ ok: false });
+  }
+  const actualizar = (p_estado, p_reembolsar, p_detalle) => rpc('billetera_actualizar_pedido',
+    { p_id_pedido: idPedido, p_estado, p_orden: ordenCentralOne, p_detalle, p_reembolsar }, { tiempoMs: 7000 });
+  const aviso = (motivo, estadoPago) => waitUntil(avisarEnHoja({
+    fase: FASES.billeteraCompra, idPedido, idJugador: 'ver tabla "pedidos" de Supabase', paquete: `pedido ${ordenCentralOne}`, motivo, estadoPago,
+  }));
+  try {
+    let r;
+    if (estado === 'completed' || estado === 'delivered') {
+      r = await actualizar('entregado', false, null);
+      if (r?.estado === 'reembolsado') {
+        aviso(`ATENCIÓN: Central One ENTREGÓ el pedido ${ordenCentralOne} después de que se devolvió el saldo al cliente.`, 'El cliente recibió la recarga Y el saldo: descontarlo con billetera_ajustar si corresponde');
+      }
+    } else if (estado === 'failed' || estado === 'cancelled') {
+      r = await actualizar('reembolsado', true, `Central One: ${evento || estado}`);
+      if (r?.estado === 'entregado') {
+        aviso(`Central One avisó ${evento || estado} del pedido ${ordenCentralOne}, que ya figuraba ENTREGADO: NO se devolvió el saldo.`, "Revisar en el portal; si no llegó, devolver con billetera_actualizar_pedido(..., 'forzar', ..., true)");
+      }
+    } else if (estado === 'refunded') {
+      aviso(`Central One REEMBOLSÓ el pedido ${ordenCentralOne} (compra con saldo).`, 'Revisar si la recarga llegó; si no, devolver el saldo con billetera_actualizar_pedido');
+    } else {
+      // Entrega parcial u otro estado final: lo decide el dueño
+      r = await actualizar('revisar', false, `Central One: ${evento || estado}`);
+      aviso(`Central One avisó ${evento || estado} del pedido ${ordenCentralOne} (compra con saldo).`, 'Saldo COBRADO: revisar cuánto llegó y devolver lo que corresponda');
+    }
+    if (r && r.estado === null) console.error(`⚠️ centralone-webhook: el pedido de billetera ${idPedido} no está en Supabase (${ordenCentralOne}, ${estado})`);
+    else console.info(`✅ centralone-webhook: billetera ${ordenCentralOne} (${estado}) → ${r?.estado ?? 'sin cambio'}`);
+    return res.status(200).json({ ok: true });
+  } catch (error) {
+    // ErrorSupabase (la función rechazó los datos): repetir no lo arreglaría
+    if (error instanceof ErrorSupabase) {
+      console.error(`❌ centralone-webhook: Supabase rechazó el aviso de billetera ${ordenCentralOne}: ${error.message}`);
+      return res.status(200).json({ ok: true });
+    }
+    console.error(`❌ centralone-webhook: Supabase no respondió al aviso de billetera ${ordenCentralOne} (${estado}): ${error.message}. Central One lo reintentará.`);
     return res.status(503).json({ ok: false });
   }
 }

@@ -40,7 +40,7 @@ const PRODUCTO_VALIDO = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-
 const PRODUCTOS_DEL_PAQUETE = /^(?:([2-9])x)?([0-9a-f-]{36})$/i;
 const sinProducto = ({ producto, ...paquete }) => paquete;
 // Lista de product_id a pedir para un paquete (vacía = no se puede pedir por la API)
-function productosDe(producto) {
+export function productosDe(producto) {
   const partes = String(producto ?? '').trim().match(PRODUCTOS_DEL_PAQUETE);
   if (!partes || !PRODUCTO_VALIDO.test(partes[2])) return [];
   return Array(Number(partes[1] || 1)).fill(partes[2].toLowerCase());
@@ -54,7 +54,7 @@ const llavePedido = (idPedido, i, total) => `ff-${idPedido}${total > 1 ? `-${i +
 // las tarjetas se reconocen por el nombre de su columna en "precios" ("Tarjeta semanal",
 // "Semanal Lite", "Tarjeta mensual"; también en inglés) -> "semanal", "semanal_lite", "mensual";
 // los demás productos con nombre (p. ej. "Pase de Subida de Nivel") por sus palabras -> "pase_de_subida_de_nivel".
-function clavePaquete(texto) {
+export function clavePaquete(texto) {
   const t = String(texto ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   if (/semanal|weekly/.test(t)) return /lite/.test(t) ? 'semanal_lite' : 'semanal';
   if (/mensual|monthly/.test(t)) return 'mensual';

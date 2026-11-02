@@ -7,7 +7,8 @@
     "api/subir-imagen.js": { "maxDuration": 30 },
     "api/ruleta.js": { "maxDuration": 30 },
     "api/fazer-webhook.js": { "maxDuration": 30 },
-    "api/centralone-webhook.js": { "maxDuration": 30 }
+    "api/centralone-webhook.js": { "maxDuration": 30 },
+    "api/billetera.js": { "maxDuration": 90 }
   },
   "rewrites": [
     { "source": "/api/precios", "destination": "/api/juego?juego=freefire&accion=precios" },
@@ -44,7 +45,7 @@
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "https://levelupstore.online" },
         { "key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
       ]
     }
   ]
