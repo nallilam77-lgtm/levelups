@@ -96,13 +96,13 @@ export async function pedirJSON(url, { metodo = 'POST', cuerpo, reintentos = 0, 
 }
 
 // Atajo para Apps Script: POST con { accion, ... }
-// A los Apps Script de recargas (Free Fire) y de Blood Strike se les añade SCRIPT_RECARGAS_TOKEN en el
+// A los Apps Script de recargas (Free Fire), Blood Strike y Mobile Legends se les añade SCRIPT_RECARGAS_TOKEN en el
 // cuerpo (Apps Script no puede leer cabeceras): así solo Vercel puede pedir pines o cambiar pagos
 // aunque la URL se filtre. Cada script lo exige solo si tiene la propiedad TOKEN_VERCEL.
 export function llamarScript(url, cuerpo, opciones = {}) {
   const token = (process.env.SCRIPT_RECARGAS_TOKEN || '').trim();
   const destino = String(url || '').trim();
-  const conToken = Boolean(destino) && ['SCRIPT_RECARGAS_URL', 'SCRIPT_BLOOD'].some((v) => destino === (process.env[v] || '').trim());
+  const conToken = Boolean(destino) && ['SCRIPT_RECARGAS_URL', 'SCRIPT_BLOOD', 'SCRIPT_MLBB'].some((v) => destino === (process.env[v] || '').trim());
   return pedirJSON(url, { ...opciones, cuerpo: token && conToken ? { ...cuerpo, token } : cuerpo });
 }
 
