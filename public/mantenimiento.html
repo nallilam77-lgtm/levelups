@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Level Up está en mantenimiento para mejorar el sistema de recargas. Vuelve en una hora o más.">
+  <meta name="theme-color" content="#0f172a">
+  <!-- Página temporal: que Google no la guarde en lugar de la tienda -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Level Up · En mantenimiento</title>
+
+  <!-- Vista previa al compartir el enlace (WhatsApp, Facebook, Telegram, X) -->
+  <link rel="canonical" href="https://www.levelupstore.online/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Level Up">
+  <meta property="og:locale" content="es_VE">
+  <meta property="og:url" content="https://www.levelupstore.online/">
+  <meta property="og:title" content="Level Up · Estamos mejorando el sistema">
+  <meta property="og:description" content="Estamos en mantenimiento para que tus recargas sean aún más rápidas. Vuelve en una hora o más.">
+  <meta name="twitter:card" content="summary">
+  <!-- Sin imágenes: la página no depende de ningún archivo. Este icono vacío evita que el navegador pida /favicon.ico -->
+  <link rel="icon" href="data:,">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Paleta Level Up: ver .claude/UI_RULES.md */
+    :root {
+      --bg-base: #0f172a;
+      --bg-deep: #0b1120;
+      --surface: rgba(15, 23, 42, 0.6);
+      --border-glass: rgba(148, 163, 184, 0.15);
+      --accent-cyan: #22d3ee;
+      --accent-cyan-strong: #06b6d4;
+      --accent-neon: #39ff14;
+      --cta-gradient: linear-gradient(135deg, var(--accent-cyan), var(--accent-neon));
+      --on-cta: #0f172a;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --glow-cyan-soft: rgba(34, 211, 238, 0.18);
+      --glow-neon-soft: rgba(57, 255, 20, 0.12);
+      --track: rgba(148, 163, 184, 0.15);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+      --shadow-glow: 0 10px 25px -5px rgba(6, 182, 212, 0.2);
+      --shadow-glow-hover: 0 12px 30px -5px rgba(6, 182, 212, 0.35);
+      --glass-blur: 12px;
+      --radius-card: 16px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 48px 16px;
+      font-family: 'Poppins', sans-serif;
+      color: var(--text-main);
+      background-color: var(--bg-deep);
+      /* Brillos detrás de la tarjeta: sin ellos el glass no se nota */
+      background-image:
+        radial-gradient(circle at 20% 15%, var(--glow-cyan-soft), transparent 45%),
+        radial-gradient(circle at 85% 85%, var(--glow-neon-soft), transparent 40%),
+        linear-gradient(180deg, var(--bg-base), var(--bg-deep));
+      overflow-x: hidden;
+    }
+
+    .glass {
+      background: var(--surface);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-card);
+    }
+
+    .tarjeta {
+      width: 100%;
+      max-width: 560px;
+      padding: 48px 32px;
+      display: grid;
+      gap: 24px;
+      justify-items: center;
+      text-align: center;
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      transition: box-shadow 250ms ease;
+    }
+    .tarjeta:hover { box-shadow: var(--shadow-lg), var(--shadow-glow-hover); }
+
+    .marca {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+    }
+
+    .etiqueta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border-glass);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+    }
+    .etiqueta__punto {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-neon);
+      animation: latido 1.6s ease-in-out infinite;
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(1.6rem, 6vw, 2.3rem);
+      line-height: 1.15;
+    }
+    h1 span {
+      background: var(--cta-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .texto {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 42ch;
+    }
+    .texto strong { color: var(--text-main); }
+
+    /* Barra de progreso indeterminada: "estamos trabajando" sin prometer una hora */
+    .progreso {
+      width: 100%;
+      max-width: 320px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--track);
+      overflow: hidden;
+    }
+    .progreso__barra {
+      width: 40%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--cta-gradient);
+      animation: avance 1.8s ease-in-out infinite;
+    }
+
+    .aviso {
+      width: 100%;
+      padding: 24px;
+      display: grid;
+      gap: 8px;
+      text-align: left;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+    .aviso strong { color: var(--text-main); }
+
+    .boton {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 12px 28px;
+      border-radius: 12px;
+      background: var(--cta-gradient);
+      color: var(--on-cta);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      text-decoration: none;
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      transition: transform 200ms ease, box-shadow 200ms ease;
+    }
+    .boton:hover,
+    .boton:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg), var(--shadow-glow-hover);
+    }
+    .boton:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 3px; }
+    .boton svg { width: 20px; height: 20px; fill: currentColor; }
+
+    .pie {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    @keyframes avance {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(250%); }
+    }
+    @keyframes latido {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.75); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .progreso__barra, .etiqueta__punto { animation: none; }
+    }
+    @media (max-width: 480px) {
+      .tarjeta { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="tarjeta glass" aria-labelledby="titulo">
+    <p class="marca">Level Up</p>
+
+    <span class="etiqueta"><span class="etiqueta__punto" aria-hidden="true"></span>En mantenimiento</span>
+
+    <h1 id="titulo">Estamos <span>mejorando el sistema</span></h1>
+
+    <p class="texto">
+      Estamos haciendo mejoras para que tus recargas de Free Fire, Roblox y Blood Strike
+      sean todavía más rápidas y seguras. <strong>Vuelve en una hora o más.</strong>
+    </p>
+
+    <div class="progreso" role="progressbar" aria-label="Mantenimiento en curso">
+      <div class="progreso__barra"></div>
+    </div>
+
+    <div class="aviso glass">
+      <p><strong>No realices pagos por ahora.</strong> Espera a que la tienda vuelva a estar disponible.</p>
+      <p>Si ya pagaste, tu pago está registrado: escríbenos por WhatsApp con tu referencia y tu ID de jugador.</p>
+    </div>
+
+    <a class="boton" href="https://wa.me/584228887089?text=Hola%20Level%20Up%2C%20vi%20que%20la%20tienda%20est%C3%A1%20en%20mantenimiento." target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.35zM12.05 21.5h-.01a9.43 9.43 0 0 1-4.8-1.31l-.35-.2-3.57.93.95-3.48-.22-.36a9.4 9.4 0 0 1-1.44-5.02c0-5.2 4.24-9.43 9.45-9.43a9.43 9.43 0 0 1 9.43 9.44c0 5.2-4.24 9.43-9.44 9.43zm8.03-17.47A11.3 11.3 0 0 0 12.05.7C5.8.7.71 5.78.7 12.04c0 2 .52 3.95 1.52 5.67L.6 23.3l5.72-1.5a11.3 11.3 0 0 0 5.72 1.46h.01c6.25 0 11.34-5.09 11.34-11.34 0-3.03-1.18-5.88-3.32-8.02z"/></svg>
+      Escríbenos por WhatsApp
+    </a>
+
+    <p class="pie">Level Up · levelupstore.online</p>
+  </main>
+</body>
+</html>

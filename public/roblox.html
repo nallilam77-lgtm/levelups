@@ -1035,12 +1035,15 @@
     // Los textos vienen de la hoja: se pintan con textContent, nunca como HTML.
     // item.stock: 'disponible' | 'pocos' | 'agotado' (sin dato = se vende normal).
     const ICONO_ROBUX = '<svg class="juego-icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z" style="fill: var(--game-accent-2)"/><path d="M12 6.5 16.5 9v6L12 17.5 7.5 15V9z" style="fill: var(--rb-azul-oscuro)"/><rect x="10" y="10" width="4" height="4" rx=".8" style="fill: var(--rb-azul-claro)"/></svg>';
-    // Grupos por tamaño de la tarjeta; lo que no empieza con un número (p. ej. Premium) va en "Otras tarjetas"
+    // Grupos por región de la tarjeta (apps-script/roblox.gs: las de Estados Unidos terminan en "EE. UU.";
+    // las demás son GLOBAL). Lo que no empieza con un número (p. ej. Premium) va en "Otras tarjetas".
     const cantidadRobux = (producto) => { const m = String(producto).match(/^\s*([\d.,]+)\s+/); return m ? Number(m[1].replace(/\D/g, '')) : null; };
+    const REGION_EEUU = /\s*EE\.?\s*UU\.?\s*$/i;
+    const esDeEEUU = (producto) => REGION_EEUU.test(String(producto));
     const GRUPOS_CATALOGO = [
-      { clave: 'chicos', titulo: 'Hasta 1.000 Robux', entra: (n) => n !== null && n <= 1000 },
-      { clave: 'grandes', titulo: 'Más de 1.000 Robux', entra: (n) => n !== null && n > 1000 },
-      { clave: 'otras', titulo: 'Otras tarjetas', entra: (n) => n === null },
+      { clave: 'global', titulo: 'Tarjetas GLOBAL', entra: (p) => cantidadRobux(p) !== null && !esDeEEUU(p) },
+      { clave: 'eeuu', titulo: 'Tarjetas de EE. UU.', entra: (p) => cantidadRobux(p) !== null && esDeEEUU(p) },
+      { clave: 'otras', titulo: 'Otras tarjetas', entra: (p) => cantidadRobux(p) === null },
     ];
     // Grupos que el cliente dejó abiertos: se respetan al volver a dibujar (p. ej. al aplicar un código)
     const gruposAbiertos = new Set();
@@ -1054,7 +1057,7 @@
     }
 
     function renderizarCatalogo(lista) {
-      const grupos = GRUPOS_CATALOGO.map((g) => ({ ...g, lista: lista.filter((p) => g.entra(cantidadRobux(p.producto))) }))
+      const grupos = GRUPOS_CATALOGO.map((g) => ({ ...g, lista: lista.filter((p) => g.entra(p.producto)) }))
         .filter((g) => g.lista.length);
       // El chat elige paquetes de esta misma lista (mismo orden que las tarjetas, grupo por grupo)
       window.catalogoGlobal = grupos.flatMap((g) => g.lista);
@@ -1108,8 +1111,9 @@
           card.classList.add('has-badge');
           card.appendChild(div(`product-badge ${item.stock}`, agotado ? 'Agotado' : '¡Últimos!'));
         }
-        // "800 Robux" → número grande + "Robux" pequeño; otros nombres se muestran completos
-        const partes = String(item.producto).match(/^\s*([\d.,]+)\s+(.+)$/);
+        // "800 Robux" → número grande + "Robux" pequeño; otros nombres se muestran completos.
+        // La región ya la dice la sección: "800 Robux EE. UU." se ve como "800 Robux".
+        const partes = String(item.producto).replace(REGION_EEUU, '').match(/^\s*([\d.,]+)\s+(.+)$/);
         if (partes) {
           card.insertAdjacentHTML('beforeend', ICONO_ROBUX);
           card.append(div('robux-count', partes[1]), div('product-label', partes[2]));
@@ -1139,7 +1143,7 @@
       const resumen = document.getElementById('stockResumen');
       resumen.replaceChildren();
       if (!lista.some((p) => p.stock)) return; // el servidor aún no envía stock
-      const nombre = (p) => { const m = String(p.producto).match(/^\s*([\d.,]+)/); return m ? m[1] : String(p.producto); };
+      const nombre = (p) => { const m = String(p.producto).match(/^\s*([\d.,]+)/); return m ? m[1] + (esDeEEUU(p.producto) ? ' (EE. UU.)' : '') : String(p.producto); };
       const unir = (nombres) => nombres.length > 1 ? `${nombres.slice(0, -1).join(', ')} y ${nombres[nombres.length - 1]}` : nombres[0];
       const conStock = lista.filter((p) => p.stock !== 'agotado').map(nombre);
       const agotados = lista.filter((p) => p.stock === 'agotado').map(nombre);
@@ -1806,11 +1810,15 @@
     const formatoRespuesta = (texto) => escaparHtml(texto).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
 
     // Tarjeta del catálogo que nombró el cliente: por el número exacto de Robux ("800" no elige "1800")
+    // y la región (si dice EE. UU./USA, la de EE. UU.; si no, la GLOBAL). Sin esa región, la otra.
     function tarjetaDelChat(texto) {
         const numero = String(texto ?? '').replace(/[^0-9]/g, '');
         if (!numero) return null;
+        const quiereEEUU = /EE\.?\s*UU|USA|ESTADOS\s+UNIDOS/i.test(String(texto));
         const lista = window.catalogoGlobal || [];
-        const indice = lista.findIndex((p) => p.stock !== 'agotado' && String(p.producto).match(/^\s*([\d.,]+)/)?.[1].replace(/[^0-9]/g, '') === numero);
+        const mismoNumero = (p) => p.stock !== 'agotado' && String(p.producto).match(/^\s*([\d.,]+)/)?.[1].replace(/[^0-9]/g, '') === numero;
+        let indice = lista.findIndex((p) => mismoNumero(p) && esDeEEUU(p.producto) === quiereEEUU);
+        if (indice < 0) indice = lista.findIndex(mismoNumero);
         return indice >= 0 ? document.querySelectorAll('#catalogContainer .product-card')[indice] || null : null;
     }
 

@@ -78,10 +78,12 @@ const MAX_PAGOS_POR_PEDIDO = 4;
 const URL_CENTRALONE = "https://portal.centraloneglobal.com/api/v1";
 // Llave SOLO con catalog:read, para el menú 🔄 (la que compra vive en Vercel, variable roblox_nuevo)
 const PROPIEDAD_LLAVE_CENTRALONE = "CENTRALONE_API_KEY";
-// Regiones de las tarjetas que se traen: solo GLOBAL (Central One quitó las de Estados Unidos). Si no hay
-// ninguna, el 🔄 avisa qué regiones hay sin tocar la hoja. Solo tarjetas de Robux
-// con stock: las de saldo en USD y las agotadas no se traen
-const REGIONES_ROBLOX = ["GLOBAL"];
+// Regiones de las tarjetas que se traen: GLOBAL y Estados Unidos (Central One la escribe de varias formas).
+// Si no hay ninguna, el 🔄 avisa qué regiones hay sin tocar la hoja. Solo tarjetas de Robux con stock:
+// las de saldo en USD y las agotadas no se traen. Las de EE. UU. llevan SUFIJO_EEUU en el nombre
+// ("800 Robux EE. UU.") y las GLOBAL no ("800 Robux"): así son paquetes distintos (ver claveDePaquete).
+const REGIONES_ROBLOX = ["GLOBAL", "US", "USA", "UNITED STATES"];
+const SUFIJO_EEUU = "EE. UU.";
 const FILA_PRODUCTO = 3;
 const FILA_COSTO = 4;
 const HOJA_TASA = "tasa_dolar";
@@ -168,7 +170,7 @@ function procesarPagoYExtraerCodigo(datos) {
   }
 
   var libro = SpreadsheetApp.getActiveSpreadsheet();
-  var numeroPaquete = paquete.replace(/[^0-9]/g, "");
+  var numeroPaquete = claveDePaquete(paquete);
   if (!numeroPaquete) return { status: "error", message: "⚠️ Paquete no reconocido." };
 
   // ---- Precio del paquete (obligatorio: sin precio en la hoja no se vende) ----
@@ -397,9 +399,9 @@ function completarCompra(datos) {
   }
 
   // Alcanza: primero el código (si se agotó, el pago nuevo NO se toca y la compra sigue pendiente)
-  var col = columnaDePaquete(hojaCodigos, paquete.replace(/[^0-9]/g, ""));
+  var col = columnaDePaquete(hojaCodigos, claveDePaquete(paquete));
   var libre = col === -1 ? { codigo: null } : buscarCodigoLibre(hojaCodigos, col);
-  var productoApi = !libre.codigo && datos.api === true ? productoDePaquete(libro, paquete.replace(/[^0-9]/g, "")) : "";
+  var productoApi = !libre.codigo && datos.api === true ? productoDePaquete(libro, claveDePaquete(paquete)) : "";
   if (productoApi) {
     // Sin códigos guardados: se compra en Central One. La fila de "por_completar" queda "⏳" (no se puede
     // completar dos veces) y entregar_api la cierra; si no se compra, liberar_api le devuelve su estado.
@@ -643,7 +645,7 @@ function productoDePaquete(libro, numeroPaquete) {
   if (!hoja || !numeroPaquete || hoja.getLastColumn() < 1) return "";
   var filas = hoja.getRange(1, 1, FILA_PRODUCTO, hoja.getLastColumn()).getValues();
   for (var p = 0; p < filas[0].length; p++) {
-    if (String(filas[0][p]).replace(/[^0-9]/g, "") !== numeroPaquete) continue;
+    if (claveDePaquete(filas[0][p]) !== numeroPaquete) continue;
     var producto = String(filas[FILA_PRODUCTO - 1][p]).trim();
     return PRODUCTO_VALIDO.test(producto) ? producto : "";
   }
@@ -782,14 +784,14 @@ function codigoLibre(celda) {
   return Boolean(celda) && celda.indexOf(PREFIJO_USADO) !== 0;
 }
 
-// Columna (1, 2...) del paquete en "Codigos" según los números del título. -1 si no está.
+// Columna (1, 2...) del paquete en "Codigos" según la clave del título (números + región). -1 si no está.
 function columnaDePaquete(hojaCodigos, numeroPaquete) {
   if (!hojaCodigos) return -1;
   var ultimaColumna = hojaCodigos.getLastColumn();
   if (ultimaColumna < 1) return -1;
   var titulos = hojaCodigos.getRange(1, 1, 1, ultimaColumna).getValues()[0];
   for (var h = 0; h < titulos.length; h++) {
-    if (String(titulos[h]).replace(/[^0-9]/g, "") === numeroPaquete) return h + 1;
+    if (claveDePaquete(titulos[h]) === numeroPaquete) return h + 1;
   }
   return -1;
 }
@@ -802,7 +804,7 @@ function precioDePaquete(libro, numeroPaquete) {
   if (ultimaColumna < 1) return 0;
   var filas = hoja.getRange(1, 1, 2, ultimaColumna).getValues();
   for (var p = 0; p < filas[0].length; p++) {
-    if (String(filas[0][p]).replace(/[^0-9]/g, "") === numeroPaquete) return limpiarMontoVES(filas[1][p]);
+    if (claveDePaquete(filas[0][p]) === numeroPaquete) return limpiarMontoVES(filas[1][p]);
   }
   return 0;
 }
@@ -826,7 +828,7 @@ function obtenerPrecios() {
       var titulo = String(filas[0][i]).trim();
       if (!titulo || !(limpiarMontoVES(filas[1][i]) > 0)) continue;
       precios[titulo] = filas[1][i];
-      stock[titulo] = libresPorNumero[titulo.replace(/[^0-9]/g, "")] || 0;
+      stock[titulo] = libresPorNumero[claveDePaquete(titulo)] || 0;
       var producto = String(filas[FILA_PRODUCTO - 1][i]).trim();
       if (PRODUCTO_VALIDO.test(producto)) productos[titulo] = producto;
     }
@@ -834,7 +836,7 @@ function obtenerPrecios() {
   return responder({ status: "success", precios: precios, stock: stock, productos: productos });
 }
 
-// { "800": 4, "1700": 0, ... }: códigos libres de cada columna de "Codigos", por el número del título
+// { "800": 4, "800-EEUU": 2, ... }: códigos libres de cada columna de "Codigos", por la clave del título
 function contarCodigosLibres(hojaCodigos) {
   var conteo = {};
   if (!hojaCodigos) return conteo;
@@ -843,7 +845,7 @@ function contarCodigosLibres(hojaCodigos) {
   if (ultimaFila < 1 || ultimaColumna < 1) return conteo;
   var valores = hojaCodigos.getRange(1, 1, ultimaFila, ultimaColumna).getValues();
   for (var c = 0; c < ultimaColumna; c++) {
-    var numero = String(valores[0][c]).replace(/[^0-9]/g, "");
+    var numero = claveDePaquete(valores[0][c]);
     if (!numero) continue;
     var libres = 0;
     for (var f = 1; f < valores.length; f++) if (codigoLibre(String(valores[f][c]).trim())) libres++;
@@ -900,7 +902,8 @@ function limpiarMontoVES(valor) {
 //   🔑 guarda la llave (propiedad del script, nunca en la hoja; basta con catalog:read) · 🔄 trae las
 //   tarjetas de Roblox de tu catálogo y les pone el precio en Bs con el dólar y la ganancia de la pestaña
 //   "tasa_dolar" (cambias el dólar y todos los precios cambian). Reemplaza toda la pestaña: solo quedan las
-//   tarjetas de Robux GLOBAL (REGIONES_ROBLOX) que Central One tiene en stock (las agotadas y las de saldo en USD no se traen).
+//   tarjetas de Robux GLOBAL y de EE. UU. (REGIONES_ROBLOX) que Central One tiene en stock (las agotadas y las de
+//   saldo en USD no se traen). La tienda las muestra en dos secciones según el nombre (las de EE. UU. terminan en SUFIJO_EEUU).
 // =====================================================================
 
 function onOpen() {
@@ -975,23 +978,28 @@ function traerProductosCentralOne() {
   }
   productos.sort(function (a, b) { return Number(a.reseller_price) - Number(b.reseller_price); });
 
-  // Uno por monto de Robux: el de la región que va primero en REGIONES_ROBLOX y, si no, el más barato
+  // Uno por monto de Robux y región (GLOBAL / EE. UU.): el más barato de cada uno
   var elegido = {}, repetidos = [];
   productos.forEach(function (p) {
-    var n = numeroDePaquete(nombreCortoRoblox(p.name));
+    var n = claveDePaquete(nombreConRegion(p));
     var actual = elegido[n];
     if (!actual) { elegido[n] = p; return; }
     var mejor = REGIONES_ROBLOX.indexOf(regionDe(p)) < REGIONES_ROBLOX.indexOf(regionDe(actual)) ? p : actual;
     repetidos.push(mejor === p ? actual : p);
     elegido[n] = mejor;
   });
-  var montos = Object.keys(elegido).sort(function (a, b) { return Number(a) - Number(b); });
+  // Primero las GLOBAL y luego las de EE. UU., cada una de menor a mayor
+  var esClaveEEUU = function (k) { return k.indexOf("-EEUU") !== -1 ? 1 : 0; };
+  var montos = Object.keys(elegido).sort(function (a, b) {
+    return esClaveEEUU(a) - esClaveEEUU(b) || parseInt(a, 10) - parseInt(b, 10);
+  });
+  var cuantosEEUU = montos.filter(esClaveEEUU).length;
 
   var hojaTasa = hojaDeTasa();
   var dolar = limpiarMontoVES(hojaTasa.getRange("B1").getValue());
   var seguir = ui.alert("Traer productos de Central One",
-    "Se reemplaza TODA la pestaña \"" + sheetNamePreciosRoblox + "\" con " + montos.length + " paquete(s) de Robux " +
-    REGIONES_ROBLOX.join(", ") + " que Central One tiene en stock" +
+    "Se reemplaza TODA la pestaña \"" + sheetNamePreciosRoblox + "\" con " + montos.length + " paquete(s) de Robux (" +
+    (montos.length - cuantosEEUU) + " GLOBAL y " + cuantosEEUU + " de EE. UU.) que Central One tiene en stock" +
     (sinStock.length ? " (" + sinStock.length + " sin stock no se traen)" : "") + ". Los demás paquetes se eliminan.\n\n" +
     "El precio en Bs se calcula solo: costo en USD × dólar (pestaña \"" + HOJA_TASA + "\", B1) + la ganancia (B2).\n\n¿Seguir?",
     ui.ButtonSet.YES_NO);
@@ -1005,7 +1013,7 @@ function traerProductosCentralOne() {
   var formulas = [];
   montos.forEach(function (n) {
     var p = elegido[n];
-    valores[0].push(textoSeguro(nombreCortoRoblox(p.name)));
+    valores[0].push(textoSeguro(nombreConRegion(p)));
     valores[1].push("");
     valores[2].push(textoSeguro(p.product_id));
     valores[3].push(Number(p.reseller_price) || "");
@@ -1023,9 +1031,10 @@ function traerProductosCentralOne() {
   hoja.getRange(2, 1).setNote("Fila 2: precio en Bs = costo (fila 4) × dólar × (1 + ganancia %). El dólar y la ganancia " +
     "se cambian en la pestaña \"" + HOJA_TASA + "\". Si escribes un número encima, ese paquete queda con precio fijo hasta el próximo 🔄.");
   hoja.getRange(FILA_PRODUCTO, 1).setNote("Fila 3: product_id de Central One, NO la toques (con él se compra el código). " +
-    "Fila 4: costo en USD · fila 5: stock (del momento del 🔄). La fila 1 se puede renombrar, pero con el mismo número de Robux.");
+    "Fila 4: costo en USD · fila 5: stock (del momento del 🔄). La fila 1 se puede renombrar, pero con el mismo número de Robux " +
+    "y, si es de Estados Unidos, terminando en \"" + SUFIJO_EEUU + "\" (en \"Codigos\" igual: \"800 Robux\" = GLOBAL, \"800 Robux " + SUFIJO_EEUU + "\" = EE. UU.).");
   SpreadsheetApp.flush();
-  ui.alert("✅ Listo: " + total + " paquete(s) de Robux con stock." +
+  ui.alert("✅ Listo: " + total + " paquete(s) de Robux con stock (" + (total - cuantosEEUU) + " GLOBAL y " + cuantosEEUU + " de EE. UU.)." +
     (sinStock.length ? " No se trajeron " + sinStock.length + " sin stock." : "") +
     (repetidos.length ? " Se quitaron " + repetidos.length + " repetido(s)." : "") +
     (dolar > 0
@@ -1055,7 +1064,7 @@ function hojaDeTasa() {
 }
 
 // Nombre corto de una tarjeta de Central One: "Roblox Gift Card 800 Robux (US)" -> "800 Robux",
-// "Roblox $10 USD" -> "10 USD". Tiene UN solo número: es la clave del paquete (ver numeroDePaquete).
+// "Roblox $10 USD" -> "10 USD". Tiene UN solo número: con la región, es la clave del paquete (ver claveDePaquete).
 function nombreCortoRoblox(nombre) {
   var t = String(nombre || "");
   var robux = t.match(/(\d[\d.,]*)\s*robux/i);
@@ -1070,7 +1079,20 @@ function esDeRobux(nombre) {
   return /\d[\d.,]*\s*robux/i.test(String(nombre || ""));
 }
 
-// Clave de un paquete: los números de su nombre ("1.000 Robux" -> "1000"), igual que en "Codigos"
-function numeroDePaquete(nombre) {
-  return String(nombre || "").replace(/[^0-9]/g, "");
+// Región de Estados Unidos: en el nombre del paquete ("800 Robux EE. UU.") o en la región de Central One ("US")
+function esDeEEUU(texto) {
+  return /EE\.?\s*UU|ESTADOS\s+UNIDOS|UNITED\s+STATES|\bUSA?\b/i.test(String(texto || ""));
+}
+
+// Nombre del paquete en la tienda: "800 Robux" (GLOBAL) o "800 Robux EE. UU."
+function nombreConRegion(p) {
+  return nombreCortoRoblox(p.name) + (esDeEEUU(p.region) ? " " + SUFIJO_EEUU : "");
+}
+
+// Clave de un paquete, igual en "PreciosRoblox" y en "Codigos": los números de su nombre y, si es de
+// EE. UU., "-EEUU" ("1.000 Robux" -> "1000", "1.000 Robux EE. UU." -> "1000-EEUU"). "" sin números.
+function claveDePaquete(nombre) {
+  var numero = String(nombre || "").replace(/[^0-9]/g, "");
+  if (!numero) return "";
+  return esDeEEUU(nombre) ? numero + "-EEUU" : numero;
 }
