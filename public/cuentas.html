@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // Modo ligero en todos los celulares y tablets (pantalla táctil), con ahorro de datos o "reducir movimiento": sin desenfoque, animaciones ni transiciones (css/ligero.css)
+    (function () { var n = navigator, c = n.connection || {}; if ((n.deviceMemory && n.deviceMemory <= 2) || (n.hardwareConcurrency && n.hardwareConcurrency <= 4) || c.saveData || /(^|\D)2g/.test(c.effectiveType || '') || (window.matchMedia && (matchMedia('(pointer: coarse)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches))) { document.documentElement.classList.add('ligero'); var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'css/ligero.css?v=3'; document.head.appendChild(l); } })();
+  </script>
+  <meta name="description" content="Compra y vende cuentas de Free Fire con Level Up como intermediario: el dinero queda retenido hasta que la cuenta se entrega. Vender es gratis.">
+  <meta name="theme-color" content="#0f172a">
+  <title>Cuentas de Free Fire - Level Up</title>
+  <link rel="canonical" href="https://www.levelupstore.online/cuentas.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Level Up">
+  <meta property="og:locale" content="es_VE">
+  <meta property="og:url" content="https://www.levelupstore.online/cuentas.html">
+  <meta property="og:title" content="Cuentas de Free Fire · Level Up">
+  <meta property="og:description" content="Compra y vende cuentas de Free Fire con intermediario: el dinero queda retenido hasta la entrega.">
+  <meta property="og:image" content="https://www.levelupstore.online/img/og-freefire.jpg?v=1">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/paginas-legales.css">
+  <link rel="stylesheet" href="css/creadores.css">
+  <link rel="stylesheet" href="css/billetera.css?v=1">
+  <link rel="stylesheet" href="css/cuentas.css?v=2">
+  <link rel="stylesheet" href="css/pie-legal.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js" defer></script>
+  <script src="js/mercado.js?v=1" defer></script>
+  <script src="js/datos-pago.js" defer></script>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+
+  <aside class="sidebar" id="sidebarMenu">
+    <button type="button" class="close-btn" onclick="toggleMenu()" aria-label="Cerrar menú">✖</button>
+    <div class="sidebar-logo">
+      <img src="logo-chico.png" alt="Logo Level Up" width="36" height="35"> LEVEL<span>UP</span>
+    </div>
+
+    <a href="index.html">🏠 Inicio</a>
+    <a href="cuentas.html" aria-current="page">🛒 Cuentas de Free Fire</a>
+    <a href="reglas-cuentas.html">🛡️ Reglas del Intermediario</a>
+    <a href="billetera.html">💰 Mi Billetera</a>
+    <a href="freefire.html">🔥 Free Fire</a>
+    <a href="roblox.html">🧱 Roblox</a>
+    <a href="bloodstrike.html">🎯 Blood Strike</a>
+    <a href="mobilelegends.html">💎 Mobile Legends</a>
+    <a href="creadores.html">⭐ Panel de Creadores</a>
+    <a href="terminos.html">📜 Términos y Condiciones</a>
+    <a href="privacidad.html">🔒 Política de Privacidad</a>
+    <a href="reembolsos.html">💸 Política de Reembolsos</a>
+  </aside>
+
+  <div class="barra-superior">
+    <button type="button" class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir menú">☰</button>
+    <a href="index.html" class="nav-logo">
+      <img src="logo-chico.png" alt="Logo Level Up" width="36" height="35"> LEVEL<span>UP</span>
+    </a>
+  </div>
+
+  <main>
+    <header class="animate-up">
+      <h1 class="titulo-principal">Cuentas de Free Fire</h1>
+      <p class="subtitulo">Compra una cuenta o vende la tuya con Level Up como intermediario: el dinero queda retenido hasta que la cuenta se entrega.</p>
+      <p class="subtitulo"><a class="enlace-reglas" href="reglas-cuentas.html">🛡️ Lee las Reglas del Intermediario</a></p>
+    </header>
+
+    <div class="mercado">
+      <ol class="como-funciona" aria-label="Cómo funciona">
+        <li><strong>1. Pagas a Level Up</strong><span>El dinero queda retenido, no va al vendedor.</span></li>
+        <li><strong>2. Recibes los datos</strong><span>En el chat del trato, con Level Up de testigo.</span></li>
+        <li><strong>3. Grabas y revisas</strong><span>Video sin cortes desde que entras a la cuenta.</span></li>
+        <li><strong>4. Finalizas</strong><span>Recién ahí el vendedor recibe su dinero.</span></li>
+      </ol>
+
+      <div class="pestanas mercado-pestanas" role="tablist" id="pestanasMercado">
+        <button type="button" class="pestana" role="tab" aria-selected="true" data-vista="buscar">Buscar</button>
+        <button type="button" class="pestana" role="tab" aria-selected="false" data-vista="vender">Vender</button>
+        <button type="button" class="pestana" role="tab" aria-selected="false" data-vista="panel">Mi panel<span class="punto-aviso oculto" id="puntoPanel" aria-label="Tienes tratos pendientes"></span></button>
+      </div>
+
+      <!-- ================= BUSCAR ================= -->
+      <section id="vistaBuscar" aria-label="Cuentas a la venta" class="vista-buscar">
+        <form class="panel-caja filtros" id="formFiltros" role="search">
+          <div class="campo">
+            <label for="filtroTexto">Buscar</label>
+            <input type="search" id="filtroTexto" placeholder="Ej: Cobra, Angelical, pase élite" maxlength="40" autocomplete="off">
+          </div>
+          <div class="campo">
+            <label for="filtroRegion">Región</label>
+            <select id="filtroRegion">
+              <option value="">Todas</option>
+              <option>LATAM</option><option>Brasil</option><option>EE. UU.</option><option>Europa</option><option>Asia</option><option>Otra</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="filtroPrecio">Precio máximo (USD)</label>
+            <input type="number" id="filtroPrecio" placeholder="Sin límite" min="1" max="5000" inputmode="numeric">
+          </div>
+          <div class="campo">
+            <label for="filtroOrden">Ordenar</label>
+            <select id="filtroOrden">
+              <option value="recientes">Más recientes</option>
+              <option value="barato">Más baratas</option>
+              <option value="caro">Más caras</option>
+              <option value="nivel">Mayor nivel</option>
+            </select>
+          </div>
+        </form>
+
+        <div class="grid-cuentas" id="gridCuentas" aria-live="polite"></div>
+        <p class="estado-lista" id="estadoLista">Cargando cuentas…</p>
+        <button type="button" class="btn-secundario btn-ver-mas oculto" id="btnVerMas">Ver más cuentas</button>
+      </section>
+
+      <!-- ================= ACCESO ================= -->
+      <section class="panel-caja oculto" id="cajaAcceso" aria-labelledby="tituloAcceso">
+        <h2 id="tituloAcceso">🔐 Entra a tu cuenta</h2>
+        <p>Usa tu correo y una contraseña. Si ya tienes billetera en Level Up, es la misma cuenta.</p>
+
+        <div class="pestanas" role="tablist" id="pestanasAcceso">
+          <button type="button" class="pestana" role="tab" aria-selected="true" data-modo="entrar">Entrar</button>
+          <button type="button" class="pestana" role="tab" aria-selected="false" data-modo="crear">Crear cuenta</button>
+        </div>
+
+        <form id="formAcceso" novalidate>
+          <div class="consulta-campos">
+            <div class="campo">
+              <label for="inputCorreo">Correo</label>
+              <input type="email" id="inputCorreo" placeholder="tucorreo@gmail.com" autocomplete="email" maxlength="120" required>
+            </div>
+            <div class="campo">
+              <label for="inputClave">Contraseña</label>
+              <input type="password" id="inputClave" placeholder="Mínimo 8 caracteres" autocomplete="current-password" minlength="8" maxlength="72" required>
+            </div>
+          </div>
+          <button type="submit" class="btn-consultar-panel" id="btnAcceso">Entrar</button>
+        </form>
+        <button type="button" class="enlace-texto" id="btnOlvide">¿Olvidaste tu contraseña?</button>
+        <div class="panel-mensaje" id="mensajeAcceso" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="panel-caja oculto" id="cajaNuevaClave" aria-labelledby="tituloNuevaClave">
+        <h2 id="tituloNuevaClave">🔑 Nueva contraseña</h2>
+        <form id="formNuevaClave" novalidate>
+          <div class="campo">
+            <label for="inputNuevaClave">Nueva contraseña</label>
+            <input type="password" id="inputNuevaClave" placeholder="Mínimo 8 caracteres" autocomplete="new-password" minlength="8" maxlength="72" required>
+          </div>
+          <button type="submit" class="btn-consultar-panel" id="btnNuevaClave">Guardar</button>
+        </form>
+        <div class="panel-mensaje" id="mensajeNuevaClave" role="status" aria-live="polite"></div>
+      </section>
+
+      <!-- ================= VENDER ================= -->
+      <section class="panel-caja oculto" id="vistaVender" aria-labelledby="tituloVender">
+        <div class="saldo-cabecera">
+          <h2 id="tituloVender">Publica tu cuenta</h2>
+          <button type="button" class="btn-secundario" data-salir>Salir</button>
+        </div>
+        <p>La revisamos antes de mostrarla. Tu WhatsApp no se publica. Cuando el comprador confirma que recibió la cuenta, el precio completo pasa a tu saldo. Publicar y vender es gratis: solo se cobra un <strong id="textoComision">4 %</strong> al retirar.</p>
+
+        <form class="form-publicar" id="formPublicar" novalidate>
+          <div class="campo">
+            <label for="pubTitulo">Título</label>
+            <input type="text" id="pubTitulo" placeholder="Ej: Cuenta nivel 72 con Cobra MP40 y 5 pases élite" minlength="8" maxlength="80" required>
+          </div>
+          <div class="form-fila tres">
+            <div class="campo">
+              <label for="pubNivel">Nivel</label>
+              <input type="number" id="pubNivel" placeholder="Ej: 65" min="1" max="100" inputmode="numeric" required>
+            </div>
+            <div class="campo">
+              <label for="pubRegion">Región</label>
+              <select id="pubRegion" required>
+                <option>LATAM</option><option>Brasil</option><option>EE. UU.</option><option>Europa</option><option>Asia</option><option>Otra</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label for="pubVinculacion">Vinculada a</label>
+              <select id="pubVinculacion" required>
+                <option>Facebook</option><option>Google</option><option>VK</option><option>X (Twitter)</option><option>Apple</option><option>Huawei</option><option>Otra</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-fila">
+            <div class="campo">
+              <label for="pubPrecio">Precio (USD)</label>
+              <input type="number" id="pubPrecio" placeholder="Ej: 25" min="1" max="5000" step="0.01" inputmode="decimal" required>
+              <p class="campo-ayuda" id="ayudaPrecio">Recibes el precio completo en tu saldo.</p>
+            </div>
+            <div class="campo">
+              <label for="pubWhatsapp">Tu WhatsApp (privado)</label>
+              <div class="campo-telefono">
+                <span>+58</span>
+                <input type="tel" id="pubWhatsapp" placeholder="4141234567" inputmode="numeric" maxlength="11" autocomplete="tel-national" required>
+              </div>
+              <p class="campo-ayuda">Solo lo ve Level Up, por si hay que avisarte de una venta.</p>
+            </div>
+          </div>
+          <div class="campo">
+            <label for="pubDestacados">Lo más valioso</label>
+            <input type="text" id="pubDestacados" placeholder="Ej: Cobra MP40, Angelical, 12 pases élite, M1887 evolutiva" maxlength="300">
+          </div>
+          <div class="campo">
+            <label for="pubDescripcion">Descripción</label>
+            <textarea id="pubDescripcion" placeholder="Cuéntale al comprador lo que trae la cuenta y desde cuándo la tienes." maxlength="1500"></textarea>
+          </div>
+          <div class="campo">
+            <span class="campo-ayuda" id="ayudaFotos">Fotos de la cuenta (1 a 6). La primera es la portada. No muestres tu ID ni datos de inicio de sesión.</span>
+            <label class="fotos-elegir">
+              <strong>Elegir fotos</strong>
+              <span>Capturas del perfil, armario y armas</span>
+              <input type="file" id="pubFotos" accept="image/*" multiple aria-describedby="ayudaFotos">
+            </label>
+            <div class="fotos-vista" id="fotosVista"></div>
+          </div>
+          <label class="casilla">
+            <input type="checkbox" id="pubAcepto" required>
+            <span>Acepto las <a href="reglas-cuentas.html" target="_blank" rel="noopener">Reglas del Intermediario</a>: entrego los datos solo en el chat del trato, retiro mi dinero con un 4 % de comisión y no recupero la cuenta después de venderla.</span>
+          </label>
+          <button type="submit" class="btn-juego" id="btnPublicar">Publicar cuenta</button>
+        </form>
+        <div class="panel-mensaje" id="mensajePublicar" role="status" aria-live="polite"></div>
+      </section>
+
+      <!-- ================= MI PANEL ================= -->
+      <div class="vista-buscar oculto" id="vistaPanel">
+        <section class="panel-caja" aria-labelledby="tituloTratos">
+          <div class="saldo-cabecera">
+            <h2 id="tituloTratos">Mis tratos</h2>
+            <button type="button" class="btn-secundario" data-salir>Salir</button>
+          </div>
+          <p class="saldo-cuenta" id="textoCuenta"></p>
+          <div class="lista-tratos" id="listaTratos"></div>
+          <div class="panel-mensaje" id="mensajeTratos" role="status" aria-live="polite"></div>
+        </section>
+
+        <section class="panel-caja" aria-labelledby="tituloSaldo">
+          <h2 id="tituloSaldo">Saldo de ventas</h2>
+          <p class="saldo-monto" id="textoSaldo">—</p>
+          <p class="saldo-nota" id="textoReputacion"></p>
+
+          <form class="form-publicar retiro" id="formRetiro" novalidate>
+            <h3>Retirar</h3>
+            <div class="form-fila tres">
+              <div class="campo">
+                <label for="retMonto">Monto (USD)</label>
+                <input type="number" id="retMonto" placeholder="Ej: 20" min="1" step="0.01" inputmode="decimal" required>
+              </div>
+              <div class="campo">
+                <label for="retMetodo">Cómo te pagamos</label>
+                <select id="retMetodo"><option>Pago Móvil</option><option>Binance</option><option>Zinli</option><option>Otro</option></select>
+              </div>
+              <div class="campo">
+                <label for="retDatos">Tus datos de cobro</label>
+                <input type="text" id="retDatos" placeholder="Banco, teléfono y cédula / correo de Binance" maxlength="200" required>
+              </div>
+            </div>
+            <p class="campo-ayuda" id="textoNeto">Se descuenta un 4 % al retirar. Los retiros se pagan los lunes.</p>
+            <button type="submit" class="btn-juego" id="btnRetiro">Pedir retiro</button>
+          </form>
+          <div class="panel-mensaje" id="mensajeRetiro" role="status" aria-live="polite"></div>
+
+          <h3 class="subtitulo-caja">Movimientos</h3>
+          <div class="tabla-scroll">
+            <table>
+              <thead><tr><th>Fecha</th><th>Detalle</th><th>Monto</th><th>Saldo</th></tr></thead>
+              <tbody id="tablaMovimientos"></tbody>
+            </table>
+          </div>
+          <h3 class="subtitulo-caja">Retiros</h3>
+          <div class="tabla-scroll">
+            <table>
+              <thead><tr><th>Fecha</th><th>Retiro</th><th>Recibes</th><th>Estado</th></tr></thead>
+              <tbody id="tablaRetiros"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel-caja" aria-labelledby="tituloMias">
+          <h2 id="tituloMias">Mis publicaciones</h2>
+          <div class="mis-cuentas" id="listaMias"></div>
+          <div class="panel-mensaje" id="mensajeMias" role="status" aria-live="polite"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Detalle de una cuenta -->
+  <div class="ventana oculto" id="ventanaDetalle" role="dialog" aria-modal="true" aria-labelledby="detalleTitulo">
+    <div class="ventana-caja">
+      <button type="button" class="ventana-cerrar" data-cerrar aria-label="Cerrar">✖</button>
+      <img class="galeria-principal" id="detalleFoto" alt="">
+      <div class="galeria-miniaturas" id="detalleMiniaturas"></div>
+      <div class="detalle-cuerpo">
+        <span class="tarjeta-codigo" id="detalleCodigo"></span>
+        <h2 id="detalleTitulo"></h2>
+        <div class="etiquetas" id="detalleEtiquetas"></div>
+        <p class="vendedor-rep" id="detalleVendedor"></p>
+        <p class="tarjeta-precio" id="detallePrecio"></p>
+        <div class="detalle-bloque" id="bloqueDestacados"><h3>Lo más valioso</h3><p id="detalleDestacados"></p></div>
+        <div class="detalle-bloque" id="bloqueDescripcion"><h3>Descripción</h3><p id="detalleDescripcion"></p></div>
+        <p class="aviso-seguro"><strong>Compra con intermediario:</strong> le pagas a Level Up y el dinero queda retenido hasta que recibes la cuenta. La entrega es en el chat del trato, con Level Up de testigo. <strong>Desde que recibas los datos, graba la pantalla sin cortes:</strong> sin ese video no hay reclamo. <a href="reglas-cuentas.html" target="_blank" rel="noopener">Ver las reglas completas</a></p>
+        <label class="casilla casilla-garantia">
+          <input type="checkbox" id="detalleGarantia">
+          <span><strong>Garantía Extendida (+<span id="textoGarantia">1</span> USD):</strong> un administrador te acompaña a cambiar todos los datos de recuperación para que el vendedor no pueda volver a entrar.</span>
+        </label>
+        <button type="button" class="btn-juego" id="btnComprar">Comprar con intermediario</button>
+        <div class="panel-mensaje" id="mensajeComprar" role="status" aria-live="polite"></div>
+        <a class="enlace-reglas centrado" id="detallePreguntar" target="_blank" rel="noopener noreferrer">¿Dudas? Pregúntanos por WhatsApp</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trato (pago, entrega, revisión y chat) -->
+  <div class="ventana oculto" id="ventanaTrato" role="dialog" aria-modal="true" aria-labelledby="tratoTitulo">
+    <div class="ventana-caja ventana-trato">
+      <button type="button" class="ventana-cerrar" data-cerrar aria-label="Cerrar">✖</button>
+      <div class="detalle-cuerpo">
+        <span class="tarjeta-codigo" id="tratoCodigo"></span>
+        <h2 id="tratoTitulo"></h2>
+        <p class="trato-resumen" id="tratoResumen"></p>
+        <ol class="pasos" id="tratoPasos">
+          <li>Pago</li><li>Entrega</li><li>Revisión</li><li>Cerrado</li>
+        </ol>
+        <div class="trato-acciones" id="tratoAcciones"></div>
+        <div class="panel-mensaje" id="mensajeTrato" role="status" aria-live="polite"></div>
+
+        <div class="chat">
+          <h3>Chat del trato</h3>
+          <p class="chat-nota">Level Up ve este chat. Nunca acuerdes pagos ni entregues datos fuera de aquí.</p>
+          <div class="chat-lista" id="chatLista" aria-live="polite"></div>
+          <form class="chat-form" id="chatForm">
+            <label for="chatTexto" class="solo-lectores">Mensaje</label>
+            <textarea id="chatTexto" rows="2" maxlength="1000" placeholder="Escribe un mensaje…"></textarea>
+            <button type="submit" class="btn-juego" id="chatEnviar">Enviar</button>
+          </form>
+          <div class="panel-mensaje" id="chatAviso" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="pie-legal">
+    <div class="pie-legal-enlaces" role="navigation" aria-label="Información legal">
+      <a href="reglas-cuentas.html">Reglas del Intermediario</a>
+      <a href="terminos.html">Términos y Condiciones</a>
+      <a href="privacidad.html">Política de Privacidad</a>
+    </div>
+    <p class="pie-legal-aviso">Level Up es un servicio independiente. No está afiliado, patrocinado ni respaldado por Garena (Free Fire). Todas las marcas y logotipos pertenecen a sus respectivos dueños.</p>
+    <p class="pie-legal-copy">&copy; 2026 <strong>Level Up</strong>. Todos los derechos reservados.</p>
+  </footer>
+
+  <a href="https://wa.me/584228887089" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Escribir a Soporte por WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12.031 0C5.385 0 0 5.383 0 12.029c0 2.124.553 4.195 1.605 6.01L.036 24l6.11-1.603c1.737 1.002 3.738 1.531 5.885 1.531 6.643 0 12.028-5.381 12.028-12.027C24.059 5.383 18.675 0 12.031 0zm3.565 17.27c-.54.269-3.187.584-3.557.584-.37 0-1.802-.234-4.225-2.656-2.424-2.425-2.657-3.856-2.657-4.226 0-.37.316-3.018.584-3.557.269-.54.912-.767 1.451-.497.54.269 1.433 3.493 1.433 3.864 0 .37-.197.808-.466 1.077-.466.466.269.269-.538.448-.179 1.077.359.627 1.614 1.882 2.241 2.241.628.359.808.09 1.077-.179.269-.269.808-.466 1.077-.466.37 0 3.595.892 3.864 1.432.27.539.043 1.182-.497 1.451z"/>
+    </svg>
+  </a>
+
+  <script>
+    function toggleMenu() {
+      const sidebar = document.getElementById('sidebarMenu');
+      const overlay = document.getElementById('menuOverlay');
+      const abierto = sidebar.classList.toggle('open');
+      overlay.style.display = abierto ? 'block' : 'none';
+      document.body.classList.toggle('no-scroll', abierto);
+    }
+  </script>
+
+  <script>
+    // =========================================================================
+    // MERCADO DE CUENTAS (comprador y vendedor). Utilidades en js/mercado.js; reglas en supabase/cuentas.sql.
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      const $ = (id) => document.getElementById(id);
+      const M = window.Mercado;
+      const cliente = M?.cliente();
+      if (!cliente) {
+        $('estadoLista').textContent = 'No pudimos cargar el mercado. Revisa tu conexión y recarga la página.';
+        return;
+      }
+      const { crear, usd, fecha, codigoCuenta, codigoTrato, codigoRetiro, urlFoto } = M;
+      const POR_PAGINA = 12;
+      const MAX_FOTOS = 6;
+      const COLUMNAS = 'id,vendedor,titulo,nivel,region,vinculacion,precio_usd,destacados,descripcion,fotos,estado,creado';
+
+      let config = { comision_retiro: 4, retiro_minimo: 5, garantia_usd: 1, horas_pago: 2, horas_revision: 24, tasa_bs: 0, instrucciones_pago: '' };
+      let sesion = null;
+      let vista = 'buscar';
+      let pagina = 0;
+      let busquedaActual = 0;
+      let fotosElegidas = [];
+      let reputacion = new Map();   // vendedor → ventas cerradas
+      let compraPendiente = null;   // { cuenta, garantia } si tocó "Comprar" sin sesión
+      let saldoDisponible = 0;
+      const yo = () => sesion?.user?.id || null;
+
+      // Mantenimiento (vence tratos sin pago, cierra los que pasaron la revisión). No se espera.
+      cliente.rpc('mercado_mantenimiento').then(() => {}, () => {});
+      M.config().then((c) => {
+        config = c;
+        $('textoComision').textContent = `${config.comision_retiro} %`;
+        $('textoGarantia').textContent = String(config.garantia_usd);
+        actualizarNeto();
+      });
+
+      // ---------------- Vistas ----------------
+      function mostrarVista(nueva) {
+        vista = nueva;
+        document.querySelectorAll('#pestanasMercado .pestana').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.vista === nueva)));
+        const necesitaSesion = nueva !== 'buscar';
+        const nuevaClave = !$('cajaNuevaClave').classList.contains('oculto');
+        $('vistaBuscar').classList.toggle('oculto', nueva !== 'buscar');
+        $('cajaAcceso').classList.toggle('oculto', !necesitaSesion || !!sesion || nuevaClave);
+        $('vistaVender').classList.toggle('oculto', nueva !== 'vender' || !sesion);
+        $('vistaPanel').classList.toggle('oculto', nueva !== 'panel' || !sesion);
+        $('tituloAcceso').textContent = compraPendiente ? '🔐 Entra para comprar' : nueva === 'panel' ? '🔐 Entra para ver tu panel' : '🔐 Entra para vender';
+        if (nueva === 'panel' && sesion) cargarPanel();
+        try { history.replaceState(null, '', nueva === 'buscar' ? location.pathname : `#${nueva}`); } catch (e) { /* sin historial */ }
+      }
+      document.querySelectorAll('#pestanasMercado .pestana').forEach((b) => b.addEventListener('click', () => mostrarVista(b.dataset.vista)));
+
+      // ---------------- Buscar ----------------
+      async function buscar(desdeCero = true) {
+        const turno = ++busquedaActual;
+        if (desdeCero) { pagina = 0; $('gridCuentas').replaceChildren(); $('estadoLista').textContent = 'Cargando cuentas…'; }
+        $('btnVerMas').classList.add('oculto');
+
+        // Solo letras, números y espacios: el texto va dentro de un filtro de PostgREST
+        const texto = $('filtroTexto').value.normalize('NFC').replace(/[^\p{L}\p{N} ]/gu, ' ').trim().replace(/\s+/g, ' ');
+        const region = $('filtroRegion').value;
+        const precioMax = Number($('filtroPrecio').value);
+        const orden = $('filtroOrden').value;
+
+        let consulta = cliente.from('cuentas_venta').select(COLUMNAS).eq('estado', 'publicada');
+        if (texto) consulta = consulta.or(`titulo.ilike.*${texto}*,destacados.ilike.*${texto}*`);
+        if (region) consulta = consulta.eq('region', region);
+        if (precioMax > 0) consulta = consulta.lte('precio_usd', precioMax);
+        if (orden === 'barato') consulta = consulta.order('precio_usd', { ascending: true });
+        else if (orden === 'caro') consulta = consulta.order('precio_usd', { ascending: false });
+        else if (orden === 'nivel') consulta = consulta.order('nivel', { ascending: false });
+        consulta = consulta.order('creado', { ascending: false }).range(pagina * POR_PAGINA, pagina * POR_PAGINA + POR_PAGINA); // 1 de más: ¿hay otra página?
+
+        const { data, error } = await consulta;
+        if (turno !== busquedaActual) return;
+        if (error) {
+          console.error('buscar cuentas', error);
+          $('estadoLista').textContent = 'No pudimos cargar las cuentas. Intenta de nuevo en un momento.';
+          return;
+        }
+        const filas = data.slice(0, POR_PAGINA);
+        await cargarReputacion(filas.map((c) => c.vendedor));
+        if (turno !== busquedaActual) return;
+        for (const cuenta of filas) $('gridCuentas').append(tarjeta(cuenta));
+        $('estadoLista').textContent = $('gridCuentas').children.length ? ''
+          : (texto || region || precioMax ? 'No hay cuentas con esos filtros. Prueba con otros.' : 'Todavía no hay cuentas publicadas. ¡Sé el primero en vender la tuya!');
+        $('btnVerMas').classList.toggle('oculto', data.length <= POR_PAGINA);
+        pagina += 1;
+      }
+
+      async function cargarReputacion(vendedores) {
+        const faltan = [...new Set(vendedores)].filter((v) => !reputacion.has(v));
+        if (!faltan.length) return;
+        const { data } = await cliente.rpc('mercado_reputacion', { p_vendedores: faltan });
+        for (const v of faltan) reputacion.set(v, 0);
+        for (const fila of data || []) reputacion.set(fila.vendedor, fila.ventas);
+      }
+      const textoReputacion = (vendedor) => {
+        const n = reputacion.get(vendedor) || 0;
+        return n ? `✔ Vendedor con ${n} venta${n === 1 ? '' : 's'} en Level Up` : 'Vendedor nuevo en Level Up';
+      };
+
+      function etiquetas(cuenta) {
+        const caja = crear('div', 'etiquetas');
+        caja.append(crear('span', 'etiqueta etiqueta-nivel', `Nivel ${cuenta.nivel}`), crear('span', 'etiqueta', cuenta.region), crear('span', 'etiqueta', cuenta.vinculacion));
+        return caja;
+      }
+
+      function tarjeta(cuenta) {
+        const boton = crear('button', 'tarjeta-cuenta');
+        boton.type = 'button';
+        const img = crear('img', 'tarjeta-foto');
+        img.src = urlFoto(cuenta.fotos[0]);
+        img.alt = `Portada de ${cuenta.titulo}`;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        const cuerpo = crear('div', 'tarjeta-cuerpo');
+        cuerpo.append(
+          crear('span', 'tarjeta-codigo', codigoCuenta(cuenta.id)),
+          crear('span', 'tarjeta-titulo', cuenta.titulo),
+          etiquetas(cuenta),
+          crear('span', 'vendedor-rep', textoReputacion(cuenta.vendedor)),
+          crear('span', 'tarjeta-precio', usd(cuenta.precio_usd)),
+        );
+        boton.append(img, cuerpo);
+        boton.addEventListener('click', () => abrirDetalle(cuenta));
+        return boton;
+      }
+
+      let temporizadorFiltros;
+      $('formFiltros').addEventListener('input', () => { clearTimeout(temporizadorFiltros); temporizadorFiltros = setTimeout(() => buscar(true), 400); });
+      $('formFiltros').addEventListener('submit', (e) => { e.preventDefault(); buscar(true); });
+      $('btnVerMas').addEventListener('click', () => buscar(false));
+
+      // ---------------- Ventanas ----------------
+      let ultimoFoco = null;
+      function abrirVentana(id) {
+        ultimoFoco = document.activeElement;
+        $(id).classList.remove('oculto');
+        document.body.classList.add('no-scroll');
+        $(id).querySelector('[data-cerrar]').focus();
+      }
+      function cerrarVentana(id) {
+        $(id).classList.add('oculto');
+        if (document.querySelectorAll('.ventana:not(.oculto)').length === 0) document.body.classList.remove('no-scroll');
+        if (id === 'ventanaTrato') { chat.cerrar(); tratoAbierto = null; if (vista === 'panel' && sesion) cargarTratos(); }
+        ultimoFoco?.focus?.();
+      }
+      document.querySelectorAll('.ventana').forEach((v) => {
+        v.querySelector('[data-cerrar]').addEventListener('click', () => cerrarVentana(v.id));
+        v.addEventListener('click', (e) => { if (e.target === v) cerrarVentana(v.id); });
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const abierta = [...document.querySelectorAll('.ventana:not(.oculto)')].pop();
+        if (abierta) cerrarVentana(abierta.id);
+      });
+
+      // ---------------- Detalle y compra ----------------
+      let cuentaAbierta = null;
+      function abrirDetalle(cuenta) {
+        cuentaAbierta = cuenta;
+        $('detalleCodigo').textContent = codigoCuenta(cuenta.id);
+        $('detalleTitulo').textContent = cuenta.titulo;
+        $('detalleEtiquetas').replaceWith(Object.assign(etiquetas(cuenta), { id: 'detalleEtiquetas' }));
+        $('detalleVendedor').textContent = textoReputacion(cuenta.vendedor);
+        $('detalleDestacados').textContent = cuenta.destacados;
+        $('bloqueDestacados').classList.toggle('oculto', !cuenta.destacados);
+        $('detalleDescripcion').textContent = cuenta.descripcion;
+        $('bloqueDescripcion').classList.toggle('oculto', !cuenta.descripcion);
+        $('mensajeComprar').textContent = '';
+
+        const miniaturas = $('detalleMiniaturas');
+        miniaturas.replaceChildren();
+        const verFoto = (i) => {
+          $('detalleFoto').src = urlFoto(cuenta.fotos[i]);
+          $('detalleFoto').alt = `Foto ${i + 1} de ${cuenta.titulo}`;
+          miniaturas.querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-current', String(i === j)));
+        };
+        if (cuenta.fotos.length > 1) {
+          cuenta.fotos.forEach((ruta, i) => {
+            const b = crear('button');
+            b.type = 'button';
+            b.setAttribute('aria-label', `Ver foto ${i + 1}`);
+            const img = crear('img');
+            img.src = urlFoto(ruta);
+            img.alt = '';
+            img.loading = 'lazy';
+            b.append(img);
+            b.addEventListener('click', () => verFoto(i));
+            miniaturas.append(b);
+          });
+        }
+        verFoto(0);
+
+        const propia = cuenta.vendedor === yo();
+        $('btnComprar').disabled = propia;
+        $('btnComprar').textContent = propia ? 'Es tu cuenta' : 'Comprar con intermediario';
+        $('detalleGarantia').checked = false;
+        const texto = `Hola Level Up, tengo una duda sobre la cuenta ${codigoCuenta(cuenta.id)} de Free Fire: "${cuenta.titulo}".`;
+        $('detallePreguntar').href = `https://wa.me/${M.WHATSAPP}?text=${encodeURIComponent(texto)}`;
+        actualizarPrecioDetalle();
+        abrirVentana('ventanaDetalle');
+      }
+      function actualizarPrecioDetalle() {
+        if (!cuentaAbierta) return;
+        const garantia = $('detalleGarantia').checked;
+        const total = Number(cuentaAbierta.precio_usd) + (garantia ? config.garantia_usd : 0);
+        $('detallePrecio').textContent = garantia ? `${usd(total)} (incluye garantía)` : usd(total);
+      }
+      $('detalleGarantia').addEventListener('change', actualizarPrecioDetalle);
+
+      $('btnComprar').addEventListener('click', () => {
+        if (!cuentaAbierta) return;
+        const pedido = { cuenta: cuentaAbierta.id, garantia: $('detalleGarantia').checked };
+        if (!sesion) {
+          compraPendiente = pedido;
+          cerrarVentana('ventanaDetalle');
+          mostrarVista('panel');
+          $('cajaAcceso').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+        comprar(pedido);
+      });
+
+      async function comprar({ cuenta, garantia }) {
+        const boton = $('btnComprar');
+        boton.disabled = true;
+        boton.textContent = 'Reservando la cuenta…';
+        try {
+          const idTrato = await M.rpc('venta_crear', { p_cuenta: cuenta, p_garantia: garantia }, 'No pudimos reservar la cuenta. Intenta de nuevo.');
+          if (!$('ventanaDetalle').classList.contains('oculto')) cerrarVentana('ventanaDetalle');
+          buscar(true);
+          mostrarVista('panel');
+          abrirTrato(idTrato);
+        } catch (error) {
+          if ($('ventanaDetalle').classList.contains('oculto')) M.mensaje($('mensajeTratos'), error.message);
+          else M.mensaje($('mensajeComprar'), error.message);
+        } finally {
+          boton.disabled = false;
+          boton.textContent = 'Comprar con intermediario';
+        }
+      }
+
+      // ---------------- Acceso (igual que la billetera) ----------------
+      let modo = 'entrar';
+      const correoValido = (c) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c);
+      function cambiarModo(nuevo) {
+        modo = nuevo;
+        document.querySelectorAll('#pestanasAcceso .pestana').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.modo === nuevo)));
+        $('btnAcceso').textContent = nuevo === 'crear' ? 'Crear cuenta' : 'Entrar';
+        $('inputClave').autocomplete = nuevo === 'crear' ? 'new-password' : 'current-password';
+        $('mensajeAcceso').textContent = '';
+      }
+      document.querySelectorAll('#pestanasAcceso .pestana').forEach((b) => b.addEventListener('click', () => cambiarModo(b.dataset.modo)));
+
+      $('formAcceso').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const correo = $('inputCorreo').value.trim().toLowerCase();
+        const clave = $('inputClave').value;
+        if (!correoValido(correo)) return M.mensaje($('mensajeAcceso'), 'Escribe un correo válido.');
+        if (clave.length < 8) return M.mensaje($('mensajeAcceso'), 'La contraseña debe tener al menos 8 caracteres.');
+        const boton = $('btnAcceso');
+        boton.disabled = true;
+        try {
+          if (modo === 'crear') {
+            const { data, error } = await cliente.auth.signUp({ email: correo, password: clave, options: { emailRedirectTo: `${location.origin}/cuentas.html#panel` } });
+            if (error) throw error;
+            if (!data.session) M.mensaje($('mensajeAcceso'), `Te enviamos un correo a ${correo}. Ábrelo y toca el enlace para activar tu cuenta.`, 'exito');
+          } else {
+            const { error } = await cliente.auth.signInWithPassword({ email: correo, password: clave });
+            if (error) throw error;
+          }
+        } catch (error) {
+          const t = String(error?.message || '');
+          M.mensaje($('mensajeAcceso'), /invalid login/i.test(t) ? 'Correo o contraseña incorrectos.'
+            : /not confirmed/i.test(t) ? 'Primero activa tu cuenta con el enlace que te enviamos por correo.'
+              : /already registered/i.test(t) ? 'Ese correo ya tiene cuenta: toca "Entrar".'
+                : /rate limit|too many/i.test(t) ? 'Demasiados intentos. Espera unos minutos.'
+                  : 'No pudimos entrar. Intenta de nuevo.');
+        } finally {
+          boton.disabled = false;
+        }
+      });
+
+      $('btnOlvide').addEventListener('click', async () => {
+        const correo = $('inputCorreo').value.trim().toLowerCase();
+        if (!correoValido(correo)) return M.mensaje($('mensajeAcceso'), 'Escribe tu correo arriba y vuelve a tocar "¿Olvidaste tu contraseña?".');
+        const { error } = await cliente.auth.resetPasswordForEmail(correo, { redirectTo: `${location.origin}/cuentas.html` });
+        M.mensaje($('mensajeAcceso'), error ? 'No pudimos enviar el correo. Intenta en unos minutos.' : `Si ${correo} tiene cuenta, te llegará un enlace para cambiar la contraseña.`, error ? 'error' : 'exito');
+      });
+
+      $('formNuevaClave').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const clave = $('inputNuevaClave').value;
+        if (clave.length < 8) return M.mensaje($('mensajeNuevaClave'), 'La contraseña debe tener al menos 8 caracteres.');
+        const { error } = await cliente.auth.updateUser({ password: clave });
+        if (error) return M.mensaje($('mensajeNuevaClave'), 'No pudimos guardar la contraseña. Pide otro enlace.');
+        $('cajaNuevaClave').classList.add('oculto');
+        mostrarVista('panel');
+      });
+
+      document.querySelectorAll('[data-salir]').forEach((b) => b.addEventListener('click', () => cliente.auth.signOut()));
+
+      // ---------------- Publicar ----------------
+      // Comprime cada foto a WebP (máx. 1280 px, < 1 MB) en el navegador: sube rápido con datos móviles
+      async function comprimir(archivo) {
+        const bitmap = await createImageBitmap(archivo);
+        const escala = Math.min(1, 1280 / Math.max(bitmap.width, bitmap.height));
+        const lienzo = document.createElement('canvas');
+        lienzo.width = Math.round(bitmap.width * escala);
+        lienzo.height = Math.round(bitmap.height * escala);
+        lienzo.getContext('2d').drawImage(bitmap, 0, 0, lienzo.width, lienzo.height);
+        bitmap.close?.();
+        for (const calidad of [0.82, 0.7, 0.55]) {
+          let blob = await new Promise((r) => lienzo.toBlob(r, 'image/webp', calidad));
+          if (!blob || blob.type !== 'image/webp') blob = await new Promise((r) => lienzo.toBlob(r, 'image/jpeg', calidad)); // Safari viejo
+          if (blob && blob.size <= 1_000_000) return blob;
+        }
+        throw new Error('FOTO_GRANDE');
+      }
+
+      function pintarFotos() {
+        const caja = $('fotosVista');
+        caja.replaceChildren();
+        fotosElegidas.forEach((foto, i) => {
+          const div = crear('div', 'foto-mini');
+          const img = crear('img');
+          img.src = foto.vista;
+          img.alt = `Foto ${i + 1}`;
+          const quitar = crear('button', null, '✖');
+          quitar.type = 'button';
+          quitar.setAttribute('aria-label', `Quitar foto ${i + 1}`);
+          quitar.addEventListener('click', () => { URL.revokeObjectURL(foto.vista); fotosElegidas.splice(i, 1); pintarFotos(); });
+          div.append(img, quitar);
+          caja.append(div);
+        });
+      }
+
+      $('pubFotos').addEventListener('change', async (e) => {
+        const archivos = [...e.target.files].filter((f) => f.type.startsWith('image/'));
+        e.target.value = '';
+        if (fotosElegidas.length + archivos.length > MAX_FOTOS) M.mensaje($('mensajePublicar'), `Máximo ${MAX_FOTOS} fotos: usamos las primeras.`, 'aviso');
+        for (const archivo of archivos.slice(0, MAX_FOTOS - fotosElegidas.length)) {
+          try {
+            const blob = await comprimir(archivo);
+            fotosElegidas.push({ archivo: blob, vista: URL.createObjectURL(blob) });
+          } catch (error) {
+            M.mensaje($('mensajePublicar'), `No pudimos usar la foto "${archivo.name}". Prueba con otra captura.`);
+          }
+        }
+        pintarFotos();
+      });
+
+      $('pubWhatsapp').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, '').replace(/^0/, '').slice(0, 10); });
+      $('pubPrecio').addEventListener('input', () => {
+        const precio = Number($('pubPrecio').value);
+        $('ayudaPrecio').textContent = precio >= 1
+          ? `Recibes ${usd(precio)} en tu saldo. Al retirarlos: ${usd(Math.round(precio * (100 - config.comision_retiro)) / 100)}.`
+          : 'Recibes el precio completo en tu saldo.';
+      });
+
+      $('formPublicar').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const aviso = $('mensajePublicar');
+        const datos = {
+          titulo: $('pubTitulo').value.trim().replace(/\s+/g, ' '),
+          nivel: Number($('pubNivel').value),
+          region: $('pubRegion').value,
+          vinculacion: $('pubVinculacion').value,
+          precio_usd: Math.round(Number($('pubPrecio').value) * 100) / 100,
+          destacados: $('pubDestacados').value.trim().replace(/\s+/g, ' '),
+          descripcion: $('pubDescripcion').value.trim(),
+        };
+        const telefono = $('pubWhatsapp').value;
+        if (datos.titulo.length < 8) return M.mensaje(aviso, 'El título debe tener al menos 8 letras.');
+        if (!Number.isInteger(datos.nivel) || datos.nivel < 1 || datos.nivel > 100) return M.mensaje(aviso, 'El nivel debe estar entre 1 y 100.');
+        if (!(datos.precio_usd >= 1 && datos.precio_usd <= 5000)) return M.mensaje(aviso, 'El precio debe estar entre 1 y 5.000 USD.');
+        if (!/^(412|414|416|422|424|426)\d{7}$/.test(telefono)) return M.mensaje(aviso, 'Escribe tu WhatsApp venezolano sin el 0. Ej: 4141234567.');
+        if (!fotosElegidas.length) return M.mensaje(aviso, 'Agrega al menos una foto de la cuenta.');
+        if (!$('pubAcepto').checked) return M.mensaje(aviso, 'Para publicar debes aceptar las Reglas del Intermediario.');
+
+        const boton = $('btnPublicar');
+        boton.disabled = true;
+        boton.textContent = 'Subiendo fotos…';
+        aviso.textContent = '';
+        const subidas = [];
+        try {
+          for (const foto of fotosElegidas) {
+            const extension = foto.archivo.type === 'image/webp' ? 'webp' : 'jpg';
+            const ruta = `${yo()}/${crypto.randomUUID().replaceAll('-', '')}.${extension}`;
+            const { error } = await cliente.storage.from(M.BUCKET).upload(ruta, foto.archivo, { contentType: foto.archivo.type, upsert: false });
+            if (error) throw error;
+            subidas.push(ruta);
+          }
+          boton.textContent = 'Publicando…';
+          const { data, error } = await cliente.from('cuentas_venta').insert({ ...datos, fotos: subidas }).select('id').single();
+          if (error) throw error;
+          const { error: errorContacto } = await cliente.from('cuentas_contacto').insert({ cuenta: data.id, whatsapp: `+58${telefono}` });
+          if (errorContacto) {
+            await cliente.from('cuentas_venta').delete().eq('id', data.id);
+            throw errorContacto;
+          }
+          fotosElegidas.forEach((f) => URL.revokeObjectURL(f.vista));
+          fotosElegidas = [];
+          pintarFotos();
+          $('formPublicar').reset();
+          M.mensaje(aviso, `¡Listo! Tu cuenta ${codigoCuenta(data.id)} quedó en revisión. Cuando la aprobemos aparecerá en el mercado.`, 'exito');
+        } catch (error) {
+          console.error('publicar', error);
+          if (subidas.length) cliente.storage.from(M.BUCKET).remove(subidas);
+          M.mensaje(aviso, M.textoError(error, 'No pudimos publicar tu cuenta. Revisa tu conexión e intenta de nuevo.'));
+        } finally {
+          boton.disabled = false;
+          boton.textContent = 'Publicar cuenta';
+        }
+      });
+
+      // ---------------- Mi panel ----------------
+      function cargarPanel() {
+        $('textoCuenta').textContent = sesion?.user?.email || '';
+        cargarTratos();
+        cargarSaldo();
+        cargarMias();
+      }
+
+      function pintarTabla(tbody, filas, vacio, celdas) {
+        tbody.replaceChildren();
+        if (!filas.length) {
+          const celda = tbody.insertRow().insertCell();
+          celda.colSpan = 4;
+          celda.className = 'sin-movimientos';
+          celda.textContent = vacio;
+          return;
+        }
+        for (const fila of filas) {
+          const tr = tbody.insertRow();
+          for (const [texto, clase] of celdas(fila)) {
+            const td = tr.insertCell();
+            td.textContent = texto;
+            if (clase) td.className = clase;
+          }
+        }
+      }
+
+      // ¿Le toca actuar a este usuario?
+      function teToca(v) {
+        const rol = v.comprador === yo() ? 'comprador' : 'vendedor';
+        return (rol === 'comprador' && v.estado === 'pendiente_pago' && !v.pago_informado_en)
+          || (rol === 'vendedor' && v.estado === 'pagada')
+          || (rol === 'comprador' && v.estado === 'entregada');
+      }
+
+      async function cargarTratos() {
+        if (!sesion) return;
+        const lista = $('listaTratos');
+        const { data, error } = await cliente.from('ventas_cuentas').select('*').order('creado', { ascending: false }).limit(50);
+        if (error) return M.mensaje($('mensajeTratos'), 'No pudimos cargar tus tratos.');
+        lista.replaceChildren();
+        const pendientes = data.filter(teToca).length;
+        $('puntoPanel').classList.toggle('oculto', !pendientes);
+        if (!data.length) {
+          lista.append(crear('p', 'estado-lista', 'Todavía no tienes compras ni ventas. Cuando compres o te compren una cuenta, el trato aparecerá aquí.'));
+          return;
+        }
+        for (const v of data) {
+          const rol = v.comprador === yo() ? 'comprador' : 'vendedor';
+          const fila = crear('button', `trato-fila${teToca(v) ? ' trato-fila-toca' : ''}`);
+          fila.type = 'button';
+          const izquierda = crear('div', 'trato-fila-datos');
+          izquierda.append(
+            crear('span', 'tarjeta-codigo', `${codigoTrato(v.id)} · ${rol === 'comprador' ? 'Compra' : 'Venta'}`),
+            crear('strong', null, v.titulo),
+            crear('span', `estado-trato estado-trato-${v.estado}`, M.TEXTO_ESTADO_TRATO[v.estado] + (teToca(v) ? ' · Te toca' : '')),
+          );
+          fila.append(izquierda, crear('span', 'tarjeta-precio', usd(rol === 'comprador' ? v.total_usd : v.precio_usd)));
+          fila.addEventListener('click', () => abrirTrato(v.id));
+          lista.append(fila);
+        }
+      }
+
+      async function cargarSaldo() {
+        if (!sesion) return;
+        const [saldo, movimientos, retiros] = await Promise.all([
+          cliente.from('saldos_vendedor').select('disponible,ventas').eq('vendedor', yo()).maybeSingle(),
+          cliente.from('movimientos_vendedor').select('tipo,monto,saldo_despues,detalle,creado').order('id', { ascending: false }).limit(20),
+          cliente.from('retiros').select('id,monto_usd,neto_usd,metodo,estado,referencia,motivo,creado').order('id', { ascending: false }).limit(10),
+        ]);
+        saldoDisponible = Number(saldo.data?.disponible || 0);
+        const ventas = saldo.data?.ventas || 0;
+        $('textoSaldo').textContent = usd(saldoDisponible);
+        $('textoReputacion').textContent = ventas ? `${ventas} venta${ventas === 1 ? '' : 's'} cerrada${ventas === 1 ? '' : 's'} · Los retiros se pagan los lunes.` : 'Aquí se suma el precio de cada cuenta que vendas.';
+        actualizarNeto();
+        pintarTabla($('tablaMovimientos'), movimientos.data || [], 'Todavía no hay movimientos.', (m) => [
+          [fecha(m.creado)], [m.detalle || m.tipo],
+          [`${m.monto > 0 ? '+' : ''}${usd(m.monto)}`, m.monto > 0 ? 'monto-mas' : 'monto-menos'], [usd(m.saldo_despues)],
+        ]);
+        const TEXTO_RETIRO = { pendiente: 'Pendiente (lunes)', pagado: 'Pagado', rechazado: 'Rechazado' };
+        pintarTabla($('tablaRetiros'), retiros.data || [], 'Todavía no has pedido retiros.', (r) => [
+          [fecha(r.creado)], [`${codigoRetiro(r.id)} · ${usd(r.monto_usd)} · ${r.metodo}`], [usd(r.neto_usd)],
+          [TEXTO_RETIRO[r.estado] + (r.referencia ? ` · Ref. ${r.referencia}` : '') + (r.motivo ? ` · ${r.motivo}` : ''), `estado estado-retiro-${r.estado}`],
+        ]);
+      }
+
+      function actualizarNeto() {
+        const monto = Number($('retMonto').value);
+        $('textoNeto').textContent = monto > 0
+          ? `Pides ${usd(monto)}, se descuenta el ${config.comision_retiro} % (${usd(Math.round(monto * config.comision_retiro) / 100)}) y recibes ${usd(Math.round(monto * (100 - config.comision_retiro)) / 100)}. Se paga el lunes.`
+          : `Retiro mínimo: ${usd(config.retiro_minimo)}. Se descuenta un ${config.comision_retiro} % al retirar. Los retiros se pagan los lunes.`;
+      }
+      $('retMonto').addEventListener('input', actualizarNeto);
+
+      $('formRetiro').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const aviso = $('mensajeRetiro');
+        const monto = Math.round(Number($('retMonto').value) * 100) / 100;
+        const datos = $('retDatos').value.trim();
+        if (!(monto >= config.retiro_minimo)) return M.mensaje(aviso, `El retiro mínimo es ${usd(config.retiro_minimo)}.`);
+        if (monto > saldoDisponible) return M.mensaje(aviso, `Tu saldo disponible es ${usd(saldoDisponible)}.`);
+        if (datos.length < 5) return M.mensaje(aviso, 'Escribe tus datos de cobro (banco, teléfono y cédula, o tu correo de Binance).');
+        if (!confirm(`¿Retirar ${usd(monto)}? Recibirás ${usd(Math.round(monto * (100 - config.comision_retiro)) / 100)} por ${$('retMetodo').value} el lunes.`)) return;
+        const boton = $('btnRetiro');
+        boton.disabled = true;
+        try {
+          const id = await M.rpc('retiro_solicitar', { p_monto: monto, p_metodo: $('retMetodo').value, p_datos: datos }, 'No pudimos pedir el retiro.');
+          M.mensaje(aviso, `Retiro ${codigoRetiro(id)} pedido. Te lo pagamos el lunes.`, 'exito');
+          $('formRetiro').reset();
+          cargarSaldo();
+        } catch (error) {
+          M.mensaje(aviso, error.message);
+        } finally {
+          boton.disabled = false;
+        }
+      });
+
+      async function cargarMias() {
+        if (!sesion) return;
+        const lista = $('listaMias');
+        lista.replaceChildren(crear('p', 'estado-lista', 'Cargando…'));
+        const { data, error } = await cliente.from('cuentas_venta').select(`${COLUMNAS},motivo_rechazo`).eq('vendedor', yo()).order('creado', { ascending: false });
+        lista.replaceChildren();
+        if (error) return M.mensaje($('mensajeMias'), 'No pudimos cargar tus publicaciones.');
+        $('mensajeMias').textContent = '';
+        if (!data.length) return lista.append(crear('p', 'estado-lista', 'Todavía no has publicado cuentas. Ve a "Vender" para publicar la primera.'));
+        for (const cuenta of data) lista.append(filaMia(cuenta));
+      }
+
+      function filaMia(cuenta) {
+        const fila = crear('article', 'mi-cuenta');
+        const img = crear('img');
+        img.src = urlFoto(cuenta.fotos[0]);
+        img.alt = '';
+        img.loading = 'lazy';
+        const datos = crear('div', 'mi-cuenta-datos');
+        datos.append(
+          crear('span', 'tarjeta-codigo', codigoCuenta(cuenta.id)),
+          crear('strong', null, cuenta.titulo),
+          crear('span', 'tarjeta-precio', usd(cuenta.precio_usd)),
+          crear('span', `estado-cuenta estado-cuenta-${cuenta.estado}`, M.TEXTO_ESTADO_CUENTA[cuenta.estado] + (cuenta.estado === 'rechazada' && cuenta.motivo_rechazo ? ` · ${cuenta.motivo_rechazo}` : '')),
+        );
+        const acciones = crear('div', 'mi-cuenta-acciones');
+        const accion = (texto, clase, fn) => {
+          const b = crear('button', `btn-secundario ${clase || ''}`, texto);
+          b.type = 'button';
+          b.addEventListener('click', async () => { b.disabled = true; await fn(); b.disabled = false; });
+          acciones.append(b);
+        };
+        const cambiarEstado = (estado) => async () => {
+          const { error } = await cliente.from('cuentas_venta').update({ estado }).eq('id', cuenta.id);
+          if (error) M.mensaje($('mensajeMias'), M.textoError(error, 'No pudimos cambiar la publicación.'));
+          cargarMias();
+        };
+        if (cuenta.estado === 'publicada') accion('Pausar', '', cambiarEstado('pausada'));
+        if (cuenta.estado === 'pausada') accion('Reanudar', '', cambiarEstado('publicada'));
+        if (!['vendida', 'reservada'].includes(cuenta.estado)) {
+          accion('Eliminar', 'btn-peligro', async () => {
+            if (!confirm(`¿Eliminar ${codigoCuenta(cuenta.id)}? No se puede deshacer.`)) return;
+            const { error } = await cliente.from('cuentas_venta').delete().eq('id', cuenta.id);
+            if (error) return M.mensaje($('mensajeMias'), 'No pudimos eliminarla.');
+            await cliente.storage.from(M.BUCKET).remove(cuenta.fotos);
+            cargarMias();
+          });
+        }
+        fila.append(img, datos);
+        if (acciones.children.length) fila.append(acciones);
+        return fila;
+      }
+
+      // ---------------- Trato ----------------
+      let tratoAbierto = null;
+      const chat = M.crearChat({
+        lista: $('chatLista'), form: $('chatForm'), input: $('chatTexto'), boton: $('chatEnviar'), aviso: $('chatAviso'), yo,
+        // Un mensaje del sistema = el trato cambió de estado: se vuelve a pintar
+        alNuevo: (mensajes) => { if (tratoAbierto && mensajes.some((m) => m.rol === 'sistema')) refrescarTrato(); },
+      });
+
+      async function abrirTrato(id) {
+        tratoAbierto = id;
+        $('mensajeTrato').textContent = '';
+        $('tratoAcciones').replaceChildren(crear('p', 'estado-lista', 'Cargando…'));
+        abrirVentana('ventanaTrato');
+        chat.abrir(id);
+        await refrescarTrato();
+      }
+
+      async function refrescarTrato() {
+        const id = tratoAbierto;
+        const { data: v, error } = await cliente.from('ventas_cuentas').select('*').eq('id', id).maybeSingle();
+        if (id !== tratoAbierto) return;
+        if (error || !v) return M.mensaje($('mensajeTrato'), 'No pudimos cargar el trato.');
+        pintarTrato(v);
+      }
+
+      function pintarTrato(v) {
+        const rol = v.comprador === yo() ? 'comprador' : 'vendedor';
+        $('tratoCodigo').textContent = `${codigoTrato(v.id)} · ${rol === 'comprador' ? 'Tu compra' : 'Tu venta'} · ${codigoCuenta(v.cuenta ?? '?')}`;
+        $('tratoTitulo').textContent = v.titulo;
+        $('tratoResumen').textContent = rol === 'comprador'
+          ? `Total: ${usd(v.total_usd)}${v.garantia ? ' (incluye Garantía Extendida)' : ''} · ${M.TEXTO_ESTADO_TRATO[v.estado]}`
+          : `Recibes en tu saldo: ${usd(v.precio_usd)} · ${M.TEXTO_ESTADO_TRATO[v.estado]}`;
+
+        const paso = { pendiente_pago: 0, pagada: 1, entregada: 2, en_reclamo: 2, cerrada: 4, cancelada: -1 }[v.estado];
+        $('tratoPasos').classList.toggle('pasos-cancelado', v.estado === 'cancelada');
+        [...$('tratoPasos').children].forEach((li, i) => {
+          li.className = i < paso ? 'hecho' : i === paso ? 'actual' : '';
+        });
+
+        const caja = $('tratoAcciones');
+        caja.replaceChildren();
+        const parrafo = (texto, clase = 'trato-texto') => caja.append(crear('p', clase, texto));
+        const boton = (texto, clase, fn) => {
+          const b = crear('button', clase, texto);
+          b.type = 'button';
+          b.addEventListener('click', async () => {
+            b.disabled = true;
+            try { await fn(); } catch (error) { M.mensaje($('mensajeTrato'), error.message); if (error.estadoCambiado) refrescarTrato(); } finally { b.disabled = false; }
+          });
+          caja.append(b);
+          return b;
+        };
+        const hecho = async (nombre, parametros, textoExito) => {
+          await M.rpc(nombre, parametros);
+          M.mensaje($('mensajeTrato'), textoExito, 'exito');
+          await refrescarTrato();
+          chat.traer();
+        };
+        const limite = (desde, horas) => fecha(new Date(new Date(desde).getTime() + horas * 3600_000).toISOString());
+
+        chat.habilitar(!['cerrada', 'cancelada'].includes(v.estado));
+
+        if (v.estado === 'pendiente_pago' && rol === 'comprador') {
+          if (v.pago_informado_en) {
+            parrafo(`Informaste tu pago por ${v.metodo_pago} (referencia ${v.referencia_pago}). Level Up lo está verificando: te avisamos en el chat.`, 'trato-texto destacado');
+          } else {
+            parrafo(`Paga ${usd(v.total_usd)}${config.tasa_bs > 0 ? ` (≈ ${M.bs(v.total_usd * config.tasa_bs)} a la tasa de hoy)` : ''} antes del ${limite(v.creado, config.horas_pago)} o el trato se cancela solo.`, 'trato-texto destacado');
+            if (config.instrucciones_pago) parrafo(config.instrucciones_pago);
+            const datosPago = crear('div', 'datos-pago');
+            datosPago.append(crear('div', null, 'Cargando datos de Pago Móvil…'));
+            caja.append(datosPago);
+            window.DatosPago?.leer().then((d) => {
+              datosPago.replaceChildren();
+              if (!d) { datosPago.append(crear('div', null, 'Pídenos los datos de pago en el chat.')); return; }
+              for (const [etiqueta, valor] of [['Banco', d.banco], ['Teléfono', d.telefono], ['Cédula', d.cedula]]) {
+                const div = crear('div', null, etiqueta);
+                div.append(crear('strong', null, valor));
+                datosPago.append(div);
+              }
+            });
+            const form = crear('form', 'form-publicar');
+            form.noValidate = true;
+            form.innerHTML = `
+              <div class="form-fila">
+                <div class="campo"><label for="pagoMetodo">Pagaste por</label><select id="pagoMetodo"></select></div>
+                <div class="campo"><label for="pagoReferencia">Referencia</label><input type="text" id="pagoReferencia" placeholder="Número de referencia" maxlength="40" autocomplete="off"></div>
+              </div>
+              <button type="submit" class="btn-juego">Ya pagué</button>`;
+            M.METODOS.forEach((m) => form.querySelector('#pagoMetodo').add(new Option(m)));
+            form.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const referencia = form.querySelector('#pagoReferencia').value.trim().replace(/\s+/g, '');
+              if (!/^[A-Za-z0-9-]{4,40}$/.test(referencia)) return M.mensaje($('mensajeTrato'), 'Escribe la referencia de tu pago (solo letras y números).');
+              const enviar = form.querySelector('button');
+              enviar.disabled = true;
+              try {
+                await hecho('venta_informar_pago', { p_venta: v.id, p_metodo: form.querySelector('#pagoMetodo').value, p_referencia: referencia }, 'Pago informado. Te avisamos en el chat cuando lo confirmemos.');
+              } catch (error) { M.mensaje($('mensajeTrato'), error.message); } finally { enviar.disabled = false; }
+            });
+            caja.append(form);
+          }
+          boton('Cancelar compra', 'btn-secundario btn-peligro', async () => {
+            if (!confirm('¿Cancelar esta compra? La cuenta vuelve al mercado.')) return;
+            await hecho('venta_cancelar', { p_venta: v.id }, 'Compra cancelada.');
+          });
+        } else if (v.estado === 'pendiente_pago') {
+          parrafo('Alguien está comprando tu cuenta. Está reservada mientras paga; cuando Level Up confirme el pago, te avisamos aquí para que entregues los datos.');
+        } else if (v.estado === 'pagada' && rol === 'vendedor') {
+          parrafo('¡El comprador ya pagó! El dinero está retenido por Level Up.', 'trato-texto destacado');
+          parrafo('1) Escribe en el chat el correo/usuario y la contraseña de la cuenta y quita las vinculaciones que el comprador tenga que cambiar. 2) Cuando termines, toca el botón. No entregues nada fuera de este chat.');
+          boton('Ya entregué los datos', 'btn-juego', async () => {
+            if (!confirm('¿Ya escribiste en el chat todos los datos de acceso?')) return;
+            await hecho('venta_entregar', { p_venta: v.id }, 'Listo. El comprador ya puede revisar la cuenta.');
+          });
+        } else if (v.estado === 'pagada') {
+          parrafo('Pago confirmado y retenido por Level Up. Espera a que el vendedor escriba los datos en este chat.', 'trato-texto destacado');
+          parrafo('Prepara la grabación de pantalla: desde que uses los datos tienes que grabar sin cortes. Sin video no hay reclamo.');
+        } else if (v.estado === 'entregada' && rol === 'comprador') {
+          parrafo('🎥 GRABA LA PANTALLA SIN CORTES desde que uses los datos (máximo 5 minutos después de la entrega).', 'trato-texto alerta');
+          parrafo(`Revisa nivel, inventario y región, y cambia el correo, la contraseña y las vinculaciones a tu nombre. Si no haces nada, el trato se cierra solo (${limite(v.entregada_en, config.horas_revision)}).`);
+          boton('Todo bien, finalizar', 'btn-juego', async () => {
+            if (!confirm('¿Ya cambiaste los datos y la cuenta está como se publicó? Al finalizar, el vendedor recibe el dinero y no se puede reclamar.')) return;
+            await hecho('venta_finalizar', { p_venta: v.id }, '¡Trato cerrado! La cuenta es tuya.');
+          });
+          const reclamo = crear('details', 'reclamo');
+          reclamo.append(crear('summary', null, 'Tengo un problema con la cuenta'));
+          const form = crear('form', 'form-publicar');
+          form.noValidate = true;
+          form.innerHTML = `
+            <div class="campo"><label for="reclamoMotivo">¿Qué pasa?</label><textarea id="reclamoMotivo" maxlength="600" placeholder="Ej: la cuenta es de otra región / no tiene la skin publicada / la contraseña no funciona"></textarea></div>
+            <div class="campo"><label for="reclamoVideo">Enlace al video sin cortes</label><input type="url" id="reclamoVideo" placeholder="https://drive.google.com/…" maxlength="300"><p class="campo-ayuda">Súbelo a Google Drive o YouTube (oculto) y pega el enlace. Sin video el reclamo no es válido.</p></div>
+            <button type="submit" class="btn-secundario btn-peligro">Enviar reclamo</button>`;
+          form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const motivo = form.querySelector('#reclamoMotivo').value.trim();
+            const video = form.querySelector('#reclamoVideo').value.trim();
+            if (motivo.length < 10) return M.mensaje($('mensajeTrato'), 'Cuéntanos qué pasa (al menos 10 letras).');
+            if (!/^https:\/\/\S{6,300}$/.test(video)) return M.mensaje($('mensajeTrato'), 'Pega el enlace de tu video (debe empezar con https://).');
+            const enviar = form.querySelector('button');
+            enviar.disabled = true;
+            try {
+              await hecho('venta_reclamar', { p_venta: v.id, p_motivo: motivo, p_video: video }, 'Reclamo enviado. Level Up lo revisará y te responderá en el chat.');
+            } catch (error) { M.mensaje($('mensajeTrato'), error.message); } finally { enviar.disabled = false; }
+          });
+          reclamo.append(form);
+          caja.append(reclamo);
+        } else if (v.estado === 'entregada') {
+          parrafo(`Entregaste los datos. El comprador está revisando la cuenta; si no reclama, el trato se cierra solo (${limite(v.entregada_en, config.horas_revision)}) y el dinero pasa a tu saldo.`);
+        } else if (v.estado === 'en_reclamo') {
+          parrafo('El comprador abrió un reclamo. Level Up está revisando el video y responderá en este chat. El dinero sigue retenido.', 'trato-texto alerta');
+          if (v.reclamo_motivo) parrafo(`Motivo: ${v.reclamo_motivo}`);
+        } else if (v.estado === 'cerrada') {
+          parrafo(rol === 'comprador'
+            ? '✔ Trato cerrado. La cuenta es tuya: no compartas tus datos con nadie.'
+            : `✔ Trato cerrado. ${usd(v.precio_usd)} ya están en tu saldo de ventas.`, 'trato-texto destacado');
+        } else if (v.estado === 'cancelada') {
+          parrafo(`Trato cancelado. ${v.resolucion || ''}`, 'trato-texto');
+        }
+      }
+
+      // ---------------- Arranque ----------------
+      cliente.auth.onAuthStateChange((evento, nueva) => {
+        sesion = nueva;
+        if (evento === 'PASSWORD_RECOVERY') {
+          $('cajaNuevaClave').classList.remove('oculto');
+          $('cajaAcceso').classList.add('oculto');
+          return;
+        }
+        // setTimeout: Supabase pide no llamar a sus funciones dentro de este aviso
+        if (evento === 'SIGNED_IN' || evento === 'SIGNED_OUT') {
+          setTimeout(() => {
+            mostrarVista(vista);
+            if (evento === 'SIGNED_IN' && compraPendiente) {
+              const pedido = compraPendiente;
+              compraPendiente = null;
+              comprar(pedido);
+            }
+          }, 0);
+        }
+      });
+      cliente.auth.getSession().then(({ data }) => {
+        sesion = data.session;
+        const inicial = location.hash.replace('#', '');
+        const trato = /^trato-(\d+)$/.exec(inicial);
+        mostrarVista(trato ? 'panel' : ['vender', 'panel'].includes(inicial) ? inicial : 'buscar');
+        if (trato && sesion) abrirTrato(Number(trato[1]));
+        if (sesion) cargarTratos();   // punto de aviso en "Mi panel"
+      });
+      buscar(true);
+    });
+  </script>
+
+</body>
+</html>
